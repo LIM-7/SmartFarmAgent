@@ -10,9 +10,9 @@
 - `VERSIONS.md`：各版本声明与备注
 - `build_docx.js`：Word 生成脚本（`npm install docx` 后 `node build_docx.js`）
 - `md2docx.py`：通用 Markdown → Word 转换工具（python-docx）
-- `Proposal.md` / `.tex` / `.pdf` / `.docx`：导师提交精简版（v1.5.1，4 页）
-- `build_docx_proposal.js`：导师版 Word 生成脚本（`npm install docx` 后 `node build_docx_proposal.js`）
-- 命名约定：`PROPOSAL.*`（全大写）= 内部完整版；`Proposal.*`（首字母大写）= 导师提交版
+- `Proposal/Proposal.md` / `.tex` / `.pdf` / `.docx`：导师提交精简版（v1.5.1，4 页）
+- `Proposal/build_docx_proposal.js`：导师版 Word 生成脚本（在 `Proposal/` 目录内 `npm install docx` 后 `node build_docx_proposal.js`）
+- 命名约定：根目录 `PROPOSAL.*`（全大写）= 内部完整版；`Proposal/` 目录内 `Proposal.*`（首字母大写）= 导师提交版（Windows 大小写不敏感，用目录区分大小写）
 
 ## 版本历史
 
