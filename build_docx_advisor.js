@@ -112,7 +112,7 @@ children.push(new Paragraph({
   spacing: { before: 120, after: 40 },
 }));
 children.push(new Paragraph({
-  children: [new TextRun({ text: "项目开题方案（导师提交版）", font: FONT_HEAD, size: 32, bold: false })],
+  children: [new TextRun({ text: "项目方案", font: FONT_HEAD, size: 32, bold: false })],
   alignment: AlignmentType.CENTER,
   spacing: { after: 80 },
 }));
@@ -206,7 +206,7 @@ children.push(table(
 children.push(heading("7. 创新点与预期成果", 1));
 children.push(numItem("智能体闭环决策：大模型直接输出设备动作指令，不只停留在问答层。"));
 children.push(numItem("边缘-云协同：断网时本地规则独立运行，联网后云端智能体接管；本地规则永远优先，误操作有兜底。"));
-children.push(numItem("低成本：硬件总成本低，农户可负担，便于推广。"));
+children.push(numItem("低成本：硬件总成本低，便于推广。"));
 children.push(numItem("全周期数字档案：从种子到收获持续记录传感器与视觉数据，形成可追溯的生长档案。"));
 
 // 8 风险与应对
@@ -225,11 +225,18 @@ children.push(table(
 
 // 附：主要开源参考
 children.push(heading("附：主要开源参考", 1));
-children.push(body("[Dify](https://github.com/langgenius/dify)（智能体/工作流平台，151k 星）、[RAGFlow](https://github.com/infiniflow/ragflow)（RAG 引擎，87k 星）、[Ultralytics](https://github.com/ultralytics/ultralytics)（YOLO 框架，60k 星）、[PlantDoc](https://github.com/pratikkayal/PlantDoc-Dataset)（病害数据集，427 星）、PlantVillage（[Kaggle](https://www.kaggle.com/datasets/abdallahalidev/plantvillage-dataset)，5 万+ 图、38 类）、司农（南京农业大学农业大语言模型，8B/32B）、[AgriAgent](https://github.com/zhiweihu1103/AgriAgent)（农业多模态大模型，125 星）、[EMQX](https://github.com/emqx/emqx)（16.5k 星）/ [Node-RED](https://github.com/node-red/node-red)（23.5k 星）（MQTT Broker 与可视化工具）。"));
+children.push(bullet("[Dify](https://github.com/langgenius/dify)（智能体/工作流平台，151k 星）"));
+children.push(bullet("[RAGFlow](https://github.com/infiniflow/ragflow)（RAG 引擎，87k 星）"));
+children.push(bullet("[Ultralytics](https://github.com/ultralytics/ultralytics)（YOLO 框架，60k 星）"));
+children.push(bullet("[PlantDoc](https://github.com/pratikkayal/PlantDoc-Dataset)（病害数据集，427 星）"));
+children.push(bullet("PlantVillage（[Kaggle](https://www.kaggle.com/datasets/abdallahalidev/plantvillage-dataset)，5 万+ 图、38 类）"));
+children.push(bullet("司农（南京农业大学农业大语言模型，8B/32B）"));
+children.push(bullet("[AgriAgent](https://github.com/zhiweihu1103/AgriAgent)（农业多模态大模型，125 星）"));
+children.push(bullet("[EMQX](https://github.com/emqx/emqx)（16.5k 星）/ [Node-RED](https://github.com/node-red/node-red)（23.5k 星）（MQTT Broker 与可视化工具）"));
 
 const doc = new Document({
-  title: "SmartFarmAgent 智慧农业智能体系统——项目开题方案（导师提交版）",
-  subject: "项目开题方案（导师提交版，v1.5）",
+  title: "SmartFarmAgent 智慧农业智能体系统——项目方案",
+  subject: "项目方案（导师提交版，v1.5.1）",
   description: "导师提交精简版：背景、架构、功能、数据链路、可行性、里程碑、创新点、风险与主要开源参考。",
   creator: "LIM",
   styles: {
