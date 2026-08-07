@@ -155,7 +155,7 @@ children.push(bullet("市面“智慧农业”多为阈值规则控制（湿度�
 children.push(bullet("机会：2025—2026 年竞赛集中在「智能体 / IoT + 大模型」方向；司农、稷丰等农业开源大模型与 RAGFlow、Dify 等 RAG 框架已成熟可用，硬件成本低，整条链路可以自研。"));
 
 // ── 2 系统总体架构（六层，分层表）──
-children.push(heading("2. 系统总体架构（六层）", 1));
+children.push(heading("2. 系统总体架构", 1));
 children.push(table(
   ["层级", "名称", "组成与职责", "关键技术"],
   [
@@ -205,15 +205,15 @@ children.push(table(
 ));
 
 // ── 5 可行性核验结论 ──
-children.push(heading("5. 可行性核验结论（2026-08-07 完成）", 1));
-children.push(numItem("**硬件与嵌入式链路：**全部器件为 STM32 生态常用模块，与现有学习内容一一对应；参考整机项目（[stm32-flower-greenhouse](https://github.com/zhujiu39/stm32-flower-greenhouse)、[smart-orchard-irrigation-system](https://github.com/cz0729zc/smart-orchard-irrigation-system) 等）已跑通相同硬件组合。"));
-children.push(numItem("**视觉检测链路：**[PlantDoc](https://github.com/pratikkayal/PlantDoc-Dataset) 数据集有官方 GitHub 仓库（427 星，CODS-COMAD 2020 论文配套）；[PlantVillage](https://www.kaggle.com/datasets/abdallahalidev/plantvillage-dataset) 数据集在 Kaggle 公开（5 万+ 图、38 类）；YOLOv8 框架成熟（[Ultralytics](https://github.com/ultralytics/ultralytics) 60k 星），已有温室作物病害检测、ESP32-CAM 实时检测先例。"));
-children.push(numItem("**大模型/智能体链路：**司农（南京农业大学，国内首个农业开源大语言模型，8B/32B，魔搭+GitHub 开源）与稷丰 [AgriAgent](https://github.com/zhiweihu1103/AgriAgent)（125 星，中文农业多模态）均已核验；[Dify](https://github.com/langgenius/dify) 官方文档确认 HTTP Request 节点可调用外部 API，因此「智能体 → HTTP → MQTT 网关 → 设备」路径可行。"));
-children.push(numItem("**云平台链路：**[EMQX](https://github.com/emqx/emqx)（16.5k 星）、[Node-RED](https://github.com/node-red/node-red)（23.5k 星）、[农业岛](https://github.com/roinli/HUIZHI-nongyeOS-cloud) 智慧农业平台（347 星，Java+Vue+Uni-app，支持 MQTT/EMQX）均已核验；[OneNET](https://open.iot.10086.cn) 为中国移动免费物联网平台，教程量大。"));
+children.push(heading("5. 可行性核验结论", 1));
+children.push(numItem("**硬件与嵌入式链路：**全部器件为 STM32 生态常用模块，与现有学习内容一一对应；参考整机项目（stm32-flower-greenhouse、smart-orchard-irrigation-system 等）已跑通相同硬件组合。"));
+children.push(numItem("**视觉检测链路：**[PlantDoc](https://github.com/pratikkayal/PlantDoc-Dataset) 数据集有官方 GitHub 仓库（427 星，CODS-COMAD 2020 论文配套）；PlantVillage 数据集在 Kaggle 公开（5 万+ 图、38 类）；YOLOv8 框架成熟（Ultralytics 60k 星），已有温室作物病害检测、ESP32-CAM 实时检测先例。"));
+children.push(numItem("**大模型/智能体链路：**司农（南京农业大学，国内首个农业开源大语言模型，8B/32B，魔搭+GitHub 开源）与稷丰 [AgriAgent](https://github.com/zhiweihu1103/AgriAgent)（125 星，中文农业多模态）均已核验；Dify 官方文档确认 HTTP Request 节点可调用外部 API，因此「智能体 → HTTP → MQTT 网关 → 设备」路径可行。"));
+children.push(numItem("**云平台链路：**[EMQX](https://github.com/emqx/emqx)（16.5k 星）、Node-RED（23.5k 星）、农业岛 智慧农业平台（347 星，Java+Vue+Uni-app，支持 MQTT/EMQX）均已核验；OneNET 为中国移动免费物联网平台，教程量大。"));
 children.push(numItem("**已知约束（写进风险）：**ESP32-CAM 算力有限，边缘推理只跑轻量模型，初期视觉走云端；司农 32B 本地部署需要较高显存，初期用 8B 或 DeepSeek API 替代。"));
 
 // ── 6 开源项目清单 ──
-children.push(heading("6. 开源项目清单（已逐项核验）", 1));
+children.push(heading("6. 开源项目清单", 1));
 children.push(body("核验方式：2026-08-07 通过 GitHub API 查询仓库全名、star 数、最近推送、是否归档；模型与数据集通过官方渠道与多家媒体报道交叉确认。"));
 
 children.push(heading("6.1 硬件/温室整机（STM32 侧）", 3));
@@ -278,11 +278,11 @@ children.push(table(
 ));
 
 // ── 8 里程碑计划 ──
-children.push(heading("8. 里程碑计划（约 6 个月，最完整成熟预设）", 1));
+children.push(heading("8. 里程碑计划（约 6 个月）", 1));
 children.push(table(
   ["阶段", "时间", "内容", "验收点"],
   [
-    ["M0 开题", "第 1—2 周", "链路定稿、软件环境搭建（Python/Dify/YOLO）", "开题汇报通过"],
+    ["M0 开题", "第 1—2 周", "链路定稿、软件环境搭建（Python/Dify/YOLO）", "开题通过"],
     ["M1 感知-控制闭环", "第 3—6 周", "传感器采集→OLED→继电器→串口帧协议→LabVIEW 上位机", "本地闭环运行，数据帧正确，远程手动可控"],
     ["M2 上云+日志", "第 7—10 周", "ESP8266 MQTT→EMQX/OneNET→Node-RED 可视化；W25Q64 日志", "云平台实时曲线、断网日志完整可补传"],
     ["M3 视觉检测", "第 11—18 周", "公开集+自采数据训练 YOLO（先 5 类常见病）→云端推理→触发喷药", "检测准确率 ≥85%，喷药动作联动"],
@@ -322,7 +322,7 @@ children.push(heading("11. 学习任务对齐表（当前学习 ↔ 项目模块
 children.push(table(
   ["当前学习内容", "项目落点"],
   [
-    ["I2C（进行中）", "BH1750 光照驱动（顺带修复 SmartAgriculture 推挽 bug）"],
+    ["I2C（进行中）", "BH1750 光照驱动（修复 SmartAgriculture 推挽 bug）"],
     ["SPI（进行中）", "W25Q64 数据日志"],
     ["DMA + 串口文本包", "数据帧收发、DMA 不定长接收"],
     ["定时器 PWM / PID", "补光灯调光、温控、泵流量调节"],
@@ -335,14 +335,14 @@ children.push(table(
 ));
 
 // ── 12 下一步 ──
-children.push(heading("12. 下一步（本周）", 1));
+children.push(heading("12. 下一步", 1));
 children.push(checkbox("搭建 Python + YOLOv8 环境，用 PlantDoc 数据集跑通识别 demo"));
 children.push(checkbox("注册 EMQX/OneNET + Dify 账号，跑通 MQTT 收发"));
 children.push(checkbox("整理 SmartAgriculture 现有代码，启动 M1 感知-控制闭环"));
 
 const doc = new Document({
   title: "SmartFarmAgent 智慧农业智能体系统——项目开题链路",
-  subject: "项目开题链路（学术排版 v1.4）",
+  subject: "项目开题链路（学术排版 v1.5）",
   description: "智慧农业智能体项目开题链路：感知 → 决策 → 执行全闭环。版本声明与备注见 VERSIONS.md。",
   creator: "LIM",
   styles: {

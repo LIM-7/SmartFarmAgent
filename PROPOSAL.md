@@ -6,7 +6,7 @@
 - 市面"智慧农业"多为阈值规则控制（湿度低于 X 就浇水），无真正的智能决策；大模型应用停留在"知识问答"层，没有闭环到设备执行。
 - 机会：2025—2026 年竞赛集中在「智能体 / IoT + 大模型」方向；司农、稷丰等农业开源大模型与 RAGFlow、Dify 等 RAG 框架已成熟可用，硬件成本低，整条链路可以自研。
 
-## 2. 系统总体架构（六层）
+## 2. 系统总体架构
 
 | 层级 | 名称 | 组成与职责 | 关键技术 |
 |---|---|---|---|
@@ -41,15 +41,15 @@
 | 执行 | MQTT 下行指令 → 网关转 HTTP/串口 → STM32 解析 → 继电器/泵/灯/喷药 | 设备动作 |
 | 闭环 | 执行状态回传 → 数据入库 → 小程序/大屏展示 + 智能体下次决策依据 | 反馈数据 |
 
-## 5. 可行性核验结论（2026-08-07 完成）
+## 5. 可行性核验结论
 
-1. **硬件与嵌入式链路**：全部器件为 STM32 生态常用模块，与现有学习内容一一对应；参考整机项目（[stm32-flower-greenhouse](https://github.com/zhujiu39/stm32-flower-greenhouse)、[smart-orchard-irrigation-system](https://github.com/cz0729zc/smart-orchard-irrigation-system) 等）已跑通相同硬件组合。
-2. **视觉检测链路**：[PlantDoc](https://github.com/pratikkayal/PlantDoc-Dataset) 数据集有官方 GitHub 仓库（427 星，CODS-COMAD 2020 论文配套）；[PlantVillage](https://www.kaggle.com/datasets/abdallahalidev/plantvillage-dataset) 数据集在 Kaggle 公开（5 万+ 图、38 类）；YOLOv8 框架成熟（[Ultralytics](https://github.com/ultralytics/ultralytics) 60k 星），已有温室作物病害检测、ESP32-CAM 实时检测先例。
-3. **大模型/智能体链路**：司农（南京农业大学，国内首个农业开源大语言模型，8B/32B，魔搭+GitHub 开源）与稷丰 [AgriAgent](https://github.com/zhiweihu1103/AgriAgent)（125 星，中文农业多模态）均已核验；[Dify](https://github.com/langgenius/dify) 官方文档确认 HTTP Request 节点可调用外部 API，因此「智能体 → HTTP → MQTT 网关 → 设备」路径可行。
-4. **云平台链路**：[EMQX](https://github.com/emqx/emqx)（16.5k 星）、[Node-RED](https://github.com/node-red/node-red)（23.5k 星）、[农业岛](https://github.com/roinli/HUIZHI-nongyeOS-cloud) 智慧农业平台（347 星，Java+Vue+Uni-app，支持 MQTT/EMQX）均已核验；[OneNET](https://open.iot.10086.cn) 为中国移动免费物联网平台，教程量大。
+1. **硬件与嵌入式链路**：全部器件为 STM32 生态常用模块，与现有学习内容一一对应；参考整机项目（stm32-flower-greenhouse、smart-orchard-irrigation-system 等）已跑通相同硬件组合。
+2. **视觉检测链路**：[PlantDoc](https://github.com/pratikkayal/PlantDoc-Dataset) 数据集有官方 GitHub 仓库（427 星，CODS-COMAD 2020 论文配套）；PlantVillage 数据集在 Kaggle 公开（5 万+ 图、38 类）；YOLOv8 框架成熟（Ultralytics 60k 星），已有温室作物病害检测、ESP32-CAM 实时检测先例。
+3. **大模型/智能体链路**：司农（南京农业大学，国内首个农业开源大语言模型，8B/32B，魔搭+GitHub 开源）与稷丰 [AgriAgent](https://github.com/zhiweihu1103/AgriAgent)（125 星，中文农业多模态）均已核验；Dify 官方文档确认 HTTP Request 节点可调用外部 API，因此「智能体 → HTTP → MQTT 网关 → 设备」路径可行。
+4. **云平台链路**：[EMQX](https://github.com/emqx/emqx)（16.5k 星）、Node-RED（23.5k 星）、农业岛 智慧农业平台（347 星，Java+Vue+Uni-app，支持 MQTT/EMQX）均已核验；OneNET 为中国移动免费物联网平台，教程量大。
 5. **已知约束（写进风险）**：ESP32-CAM 算力有限，边缘推理只跑轻量模型，初期视觉走云端；司农 32B 本地部署需要较高显存，初期用 8B 或 DeepSeek API 替代。
 
-## 6. 开源项目清单（已逐项核验）
+## 6. 开源项目清单
 
 > 核验方式：2026-08-07 通过 GitHub API 查询仓库全名、star 数、最近推送、是否归档；模型与数据集通过官方渠道与多家媒体报道交叉确认。
 
@@ -109,11 +109,11 @@
 | 补光灯 | 光照补充（PWM 调光） |
 | 舵机 ×2（可选） | 喷药两轴云台 |
 
-## 8. 里程碑计划（约 6 个月，最完整成熟预设）
+## 8. 里程碑计划（约 6 个月）
 
 | 阶段 | 时间 | 内容 | 验收点 |
 |---|---|---|---|
-| M0 开题 | 第 1—2 周 | 链路定稿、软件环境搭建（Python/Dify/YOLO） | 开题汇报通过 |
+| M0 开题 | 第 1—2 周 | 链路定稿、软件环境搭建（Python/Dify/YOLO） | 开题通过 |
 | M1 感知-控制闭环 | 第 3—6 周 | 传感器采集→OLED→继电器→串口帧协议→LabVIEW 上位机 | 本地闭环运行，数据帧正确，远程手动可控 |
 | M2 上云+日志 | 第 7—10 周 | ESP8266 MQTT→EMQX/OneNET→Node-RED 可视化；W25Q64 日志 | 云平台实时曲线、断网日志完整可补传 |
 | M3 视觉检测 | 第 11—18 周 | 公开集+自采数据训练 YOLO（先 5 类常见病）→云端推理→触发喷药 | 检测准确率 ≥85%，喷药动作联动 |
@@ -144,7 +144,7 @@
 
 | 当前学习内容 | 项目落点 |
 |---|---|
-| I2C（进行中） | BH1750 光照驱动（顺带修复 SmartAgriculture 推挽 bug） |
+| I2C（进行中） | BH1750 光照驱动（修复 SmartAgriculture 推挽 bug） |
 | SPI（进行中） | W25Q64 数据日志 |
 | DMA + 串口文本包 | 数据帧收发、DMA 不定长接收 |
 | 定时器 PWM / PID | 补光灯调光、温控、泵流量调节 |
@@ -152,7 +152,7 @@
 | 新增：Python/OpenCV/YOLO | 病害检测、生长分析 |
 | 新增：Dify/Coze + RAG | 智能体决策层 |
 
-## 12. 下一步（本周）
+## 12. 下一步
 
 - [ ] 搭建 Python + YOLOv8 环境，用 PlantDoc 数据集跑通识别 demo
 - [ ] 注册 EMQX/OneNET + Dify 账号，跑通 MQTT 收发
