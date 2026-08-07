@@ -342,7 +342,7 @@ children.push(checkbox("整理 SmartAgriculture 现有代码，启动 M1 感知-
 
 const doc = new Document({
   title: "SmartFarmAgent 智慧农业智能体系统——项目开题链路",
-  subject: "项目开题链路（学术排版 v1.5）",
+  subject: "项目开题链路（学术排版 v1.4.1）",
   description: "智慧农业智能体项目开题链路：感知 → 决策 → 执行全闭环。版本声明与备注见 VERSIONS.md。",
   creator: "LIM",
   styles: {

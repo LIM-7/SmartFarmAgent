@@ -10,6 +10,8 @@
 - `VERSIONS.md`：各版本声明与备注
 - `build_docx.js`：Word 生成脚本（`npm install docx` 后 `node build_docx.js`）
 - `md2docx.py`：通用 Markdown → Word 转换工具（python-docx）
+- `PROPOSAL_ADVISOR.md` / `.tex` / `.pdf` / `.docx`：导师提交精简版（v1.5，2—3 页）
+- `build_docx_advisor.js`：导师版 Word 生成脚本（`npm install docx` 后 `node build_docx_advisor.js`）
 
 ## 版本历史
 
