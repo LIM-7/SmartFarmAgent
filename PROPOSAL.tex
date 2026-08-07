@@ -14,7 +14,7 @@
 
 \hypersetup{
   pdftitle={SmartFarmAgent 智慧农业智能体系统——项目开题链路},
-  pdfsubject={项目开题链路（学术排版 v1.3）},
+  pdfsubject={项目开题链路（学术排版 v1.4）},
   pdfauthor={}
 }
 
@@ -55,25 +55,29 @@
   \toprule
   功能 & 实现方案 & 难度 & 可行性 & 依据 & 学习点 \\
   \midrule
-  自动浇水/施肥 & 土壤湿度+光照综合判断；继电器驱动水泵/蠕动泵 & 2 星 & 可行 & 已有传感器+继电器；开源整机已验证 & GPIO、ADC、串口 \\
-  环境自动调控 & DHT11/BH1750 → 风扇/加热/补光灯；PWM 调光（PID 可选） & 2 星 & 可行 & 传感器已有；PWM/PID 为已学或进行中 & 定时器 PWM、PID \\
-  病虫害检测+给药 & 摄像头定拍 → YOLOv8（先云后边）→ 喷药泵 & 3 星 & 可行 & PlantDoc/PlantVillage 公开集 + ESP32-CAM/YOLO 先例 & Python、YOLO、视觉 \\
-  生长状况分析 & 定距定时拍照 → 叶片数/株高/颜色统计 → 大模型周报 & 3 星 & 可行 & 视觉测量工具包开源可用 & 视觉、LLM API \\
-  智能体决策 & 传感器+检测+历史 → 大模型（司农/DeepSeek）→ 指令+解释 & 3 星 & 可行 & Dify HTTP 节点可调外部 API；农业大模型已开源 & RAG、Agent \\
-  数据中台/展示 & MQTT 上行 → 时序存储 → 小程序/H5；W25Q64 本地日志 & 2 星 & 可行 & EMQX/Node-RED 成熟；农业岛可二开 & SPI、云平台 \\
+  自动浇水/施肥 & 土壤湿度+光照综合判断；继电器驱动水泵/蠕动泵 & 中 & 可行 & 已有传感器+继电器；开源整机已验证 & GPIO、ADC、串口 \\
+  环境自动调控 & DHT11/BH1750 → 风扇/加热/补光灯；PWM 调光（PID 可选） & 中 & 可行 & 传感器已有；PWM/PID 为已学或进行中 & 定时器 PWM、PID \\
+  病虫害检测+给药 & 摄像头定拍 → YOLOv8（先云后边）→ 喷药泵 & 高 & 可行 & PlantDoc/PlantVillage 公开集 + ESP32-CAM/YOLO 先例 & Python、YOLO、视觉 \\
+  生长状况分析 & 定距定时拍照 → 叶片数/株高/颜色统计 → 大模型周报 & 高 & 可行 & 视觉测量工具包开源可用 & 视觉、LLM API \\
+  智能体决策 & 传感器+检测+历史 → 大模型（司农/DeepSeek）→ 指令+解释 & 高 & 可行 & Dify HTTP 节点可调外部 API；农业大模型已开源 & RAG、Agent \\
+  数据中台/展示 & MQTT 上行 → 时序存储 → 小程序/H5；W25Q64 本地日志 & 中 & 可行 & EMQX/Node-RED 成熟；农业岛可二开 & SPI、云平台 \\
   \bottomrule
 \end{longtable}
 \end{small}
 
 \section{完整数据链路（感知 → 决策 → 执行）}
-\begin{itemize}
-  \item 感知：BH1750/DHT11/土壤 → STM32 采集打包（文本帧）；摄像头（ESP32-CAM）→ 图片上传
-  \item 通信：USART 帧 + ESP8266 MQTT（本地同时接 LabVIEW 调试 + W25Q64 日志）
-  \item 云：MQTT Broker（EMQX/OneNET）→ 时序存储 + Node-RED 可视化
-  \item AI：视觉服务（YOLO 病害检测/生长分析）→ 结果入事件队列；智能体（LLM+RAG）综合传感器+视觉+历史 → 决策 JSON
-  \item 执行：MQTT 下行指令 → 网关转 HTTP/串口 → STM32 解析 → 继电器/水泵/风扇/补光灯/喷药泵
-  \item 闭环：执行状态回传 → 数据入库 → 小程序/大屏展示 + 智能体下次决策依据
-\end{itemize}
+\begin{longtable}{p{1.5cm}p{11.0cm}p{2.6cm}}
+  \toprule
+  环节 & 内容 & 输出 \\
+  \midrule
+  感知 & BH1750/DHT11/土壤 → STM32 采集打包（文本帧）；摄像头（ESP32-CAM）→ 图片上传 & 数据帧 / 图片 \\
+  通信 & USART 帧 + ESP8266 MQTT（本地同时接 LabVIEW 调试 + W25Q64 日志） & 上行数据 \\
+  云端 & MQTT Broker（EMQX/OneNET）→ 时序存储 + Node-RED 可视化 & 时序数据 \\
+  AI & 视觉服务（YOLO 病害检测/生长分析）→ 结果入事件队列；智能体（LLM+RAG）综合传感器+视觉+历史 → 决策 JSON & 决策 JSON \\
+  执行 & MQTT 下行指令 → 网关转 HTTP/串口 → STM32 解析 → 继电器/水泵/风扇/补光灯/喷药泵 & 设备动作 \\
+  闭环 & 执行状态回传 → 数据入库 → 小程序/大屏展示 + 智能体下次决策依据 & 反馈数据 \\
+  \bottomrule
+\end{longtable}
 
 \section{可行性核验结论（2026-08-07 完成）}
 \begin{enumerate}

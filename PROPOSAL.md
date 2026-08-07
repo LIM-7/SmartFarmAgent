@@ -23,37 +23,30 @@
 
 | # | 功能 | 实现方案 | 难度 | 可行性依据 | 对应学习点 |
 |---|---|---|---|---|---|
-| 1 | 自动浇水/施肥 | 土壤湿度+光照综合判断；继电器驱动水泵/蠕动泵 | ★★ | 已有土壤传感器+继电器；开源整机项目已验证 | GPIO、ADC、串口协议 |
-| 2 | 环境自动调控 | DHT11/BH1750 → 风扇/加热/补光灯；PWM 调光（PID 可选） | ★★ | 传感器已有；PWM/PID 为已学或进行中内容 | 定时器 PWM、PID |
-| 3 | 病虫害检测+给药 | 摄像头定拍 → YOLOv8（先云后边）→ 置信度达标 → 喷药泵 | ★★★ | PlantDoc/PlantVillage 公开数据集 + 多个 ESP32-CAM/YOLO 先例 | Python、YOLO、视觉 |
-| 4 | 生长状况分析 | 定距定时拍照 → 叶片数/株高/颜色统计 → 大模型生成周报 | ★★★ | 视觉测量工具包开源可用 | 视觉、LLM API |
-| 5 | 智能体决策 | 传感器+检测+历史 → 大模型（司农/DeepSeek）→ 设备指令+解释 | ★★★ | Dify 官方 HTTP 节点可调外部 API；农业大模型已开源 | RAG、Agent |
-| 6 | 数据中台/展示 | MQTT 上行 → 时序存储 → 小程序/H5；W25Q64 本地日志 | ★★ | EMQX/Node-RED 成熟；农业岛平台可二开 | SPI、云平台 |
+| 1 | 自动浇水/施肥 | 土壤湿度+光照综合判断；继电器驱动水泵/蠕动泵 | 中 | 已有土壤传感器+继电器；开源整机项目已验证 | GPIO、ADC、串口协议 |
+| 2 | 环境自动调控 | DHT11/BH1750 → 风扇/加热/补光灯；PWM 调光（PID 可选） | 中 | 传感器已有；PWM/PID 为已学或进行中内容 | 定时器 PWM、PID |
+| 3 | 病虫害检测+给药 | 摄像头定拍 → YOLOv8（先云后边）→ 置信度达标 → 喷药泵 | 高 | PlantDoc/PlantVillage 公开数据集 + 多个 ESP32-CAM/YOLO 先例 | Python、YOLO、视觉 |
+| 4 | 生长状况分析 | 定距定时拍照 → 叶片数/株高/颜色统计 → 大模型生成周报 | 高 | 视觉测量工具包开源可用 | 视觉、LLM API |
+| 5 | 智能体决策 | 传感器+检测+历史 → 大模型（司农/DeepSeek）→ 设备指令+解释 | 高 | Dify 官方 HTTP 节点可调外部 API；农业大模型已开源 | RAG、Agent |
+| 6 | 数据中台/展示 | MQTT 上行 → 时序存储 → 小程序/H5；W25Q64 本地日志 | 中 | EMQX/Node-RED 成熟；农业岛平台可二开 | SPI、云平台 |
 
 ## 4. 完整数据链路（感知 → 决策 → 执行）
 
-```text
-[传感器] BH1750/DHT11/土壤 → STM32 采集打包(文本帧)
-        摄像头(ESP32-CAM) → 图片上传(HTTP/MQTT)
-                    ↓
-[通信] USART 帧 + ESP8266 MQTT（本地同时接 LabVIEW 调试 + W25Q64 日志）
-                    ↓
-[云]  MQTT Broker(EMQX/OneNET) → 时序存储 + Node-RED 可视化
-                    ↓
-[AI]  视觉服务(YOLO 病害检测/生长分析) → 结果入事件队列
-      智能体(LLM + RAG 农业知识库) 综合：传感器 + 视觉 + 历史 → 决策 JSON
-                    ↓
-[执行] MQTT 下行指令 → 网关转 HTTP/串口 → STM32 解析 → 继电器/泵/灯/喷药
-                    ↓
-[闭环] 执行状态回传 → 数据入库 → 小程序/大屏展示 + 智能体下次决策依据
-```
+| 环节 | 内容 | 输出 |
+|---|---|---|
+| 感知 | BH1750/DHT11/土壤 → STM32 采集打包（文本帧）；ESP32-CAM 拍照上传（HTTP/MQTT） | 数据帧 / 图片 |
+| 通信 | USART 帧 + ESP8266 MQTT；本地接 LabVIEW 调试 + W25Q64 日志 | 上行数据 |
+| 云端 | MQTT Broker（EMQX/OneNET）→ 时序存储 + Node-RED 可视化 | 时序数据 |
+| AI | 视觉服务（YOLO 病害检测/生长分析）→ 结果入事件队列；智能体（LLM+RAG）综合传感器+视觉+历史 | 决策 JSON |
+| 执行 | MQTT 下行指令 → 网关转 HTTP/串口 → STM32 解析 → 继电器/泵/灯/喷药 | 设备动作 |
+| 闭环 | 执行状态回传 → 数据入库 → 小程序/大屏展示 + 智能体下次决策依据 | 反馈数据 |
 
 ## 5. 可行性核验结论（2026-08-07 完成）
 
 1. **硬件与嵌入式链路**：全部器件为 STM32 生态常用模块，与现有学习内容一一对应；参考整机项目（[stm32-flower-greenhouse](https://github.com/zhujiu39/stm32-flower-greenhouse)、[smart-orchard-irrigation-system](https://github.com/cz0729zc/smart-orchard-irrigation-system) 等）已跑通相同硬件组合。
-2. **视觉检测链路**：[PlantDoc](https://github.com/pratikkayal/PlantDoc-Dataset) 数据集有官方 GitHub 仓库（427★，CODS-COMAD 2020 论文配套）；[PlantVillage](https://www.kaggle.com/datasets/abdallahalidev/plantvillage-dataset) 数据集在 Kaggle 公开（5 万+ 图、38 类）；YOLOv8 框架成熟（[Ultralytics](https://github.com/ultralytics/ultralytics) 60k★），已有温室作物病害检测、ESP32-CAM 实时检测先例。
-3. **大模型/智能体链路**：司农（南京农业大学，国内首个农业开源大语言模型，8B/32B，魔搭+GitHub 开源）与稷丰 [AgriAgent](https://github.com/zhiweihu1103/AgriAgent)（125★，中文农业多模态）均已核验；[Dify](https://github.com/langgenius/dify) 官方文档确认 HTTP Request 节点可调用外部 API，因此「智能体 → HTTP → MQTT 网关 → 设备」路径可行。
-4. **云平台链路**：[EMQX](https://github.com/emqx/emqx)（16.5k★）、[Node-RED](https://github.com/node-red/node-red)（23.5k★）、[农业岛](https://github.com/roinli/HUIZHI-nongyeOS-cloud) 智慧农业平台（347★，Java+Vue+Uni-app，支持 MQTT/EMQX）均已核验；[OneNET](https://open.iot.10086.cn) 为中国移动免费物联网平台，教程量大。
+2. **视觉检测链路**：[PlantDoc](https://github.com/pratikkayal/PlantDoc-Dataset) 数据集有官方 GitHub 仓库（427 星，CODS-COMAD 2020 论文配套）；[PlantVillage](https://www.kaggle.com/datasets/abdallahalidev/plantvillage-dataset) 数据集在 Kaggle 公开（5 万+ 图、38 类）；YOLOv8 框架成熟（[Ultralytics](https://github.com/ultralytics/ultralytics) 60k 星），已有温室作物病害检测、ESP32-CAM 实时检测先例。
+3. **大模型/智能体链路**：司农（南京农业大学，国内首个农业开源大语言模型，8B/32B，魔搭+GitHub 开源）与稷丰 [AgriAgent](https://github.com/zhiweihu1103/AgriAgent)（125 星，中文农业多模态）均已核验；[Dify](https://github.com/langgenius/dify) 官方文档确认 HTTP Request 节点可调用外部 API，因此「智能体 → HTTP → MQTT 网关 → 设备」路径可行。
+4. **云平台链路**：[EMQX](https://github.com/emqx/emqx)（16.5k 星）、[Node-RED](https://github.com/node-red/node-red)（23.5k 星）、[农业岛](https://github.com/roinli/HUIZHI-nongyeOS-cloud) 智慧农业平台（347 星，Java+Vue+Uni-app，支持 MQTT/EMQX）均已核验；[OneNET](https://open.iot.10086.cn) 为中国移动免费物联网平台，教程量大。
 5. **已知约束（写进风险）**：ESP32-CAM 算力有限，边缘推理只跑轻量模型，初期视觉走云端；司农 32B 本地部署需要较高显存，初期用 8B 或 DeepSeek API 替代。
 
 ## 6. 开源项目清单（已逐项核验）
@@ -61,40 +54,40 @@
 > 核验方式：2026-08-07 通过 GitHub API 查询仓库全名、star 数、最近推送、是否归档；模型与数据集通过官方渠道与多家媒体报道交叉确认。
 
 ### 6.1 硬件/温室整机（STM32 侧）
-- [zhujiu39/stm32-flower-greenhouse](https://github.com/zhujiu39/stm32-flower-greenhouse)（2026-06 更新，0★）✅：STM32F103C8T6 花卉温室，OLED+继电器自动控制+ESP8266 MQTT+ThingsCloud，与现有 SmartAgriculture 几乎同构。
-- [cz0729zc/smart-orchard-irrigation-system](https://github.com/cz0729zc/smart-orchard-irrigation-system)（26★）✅：STM32+ESP8266 果园灌溉，土壤/光照/温湿度、自动灌溉、驱鸟、LED 补光、APP 远程控制，功能面最全。
-- [mcu-coder/stm32_environmental_monitoring](https://github.com/mcu-coder/stm32_environmental_monitoring)（20★）✅：农业大棚环境监测系统（毕业设计案例）。
-- [lidonghang-02/greenhouse_control_system](https://github.com/lidonghang-02/greenhouse_control_system)（13★）✅：基于 STM32 的温室控制系统。
+- [zhujiu39/stm32-flower-greenhouse](https://github.com/zhujiu39/stm32-flower-greenhouse)（2026-06 更新，0 星，已核验）：STM32F103C8T6 花卉温室，OLED+继电器自动控制+ESP8266 MQTT+ThingsCloud，与现有 SmartAgriculture 几乎同构。
+- [cz0729zc/smart-orchard-irrigation-system](https://github.com/cz0729zc/smart-orchard-irrigation-system)（26 星，已核验）：STM32+ESP8266 果园灌溉，土壤/光照/温湿度、自动灌溉、驱鸟、LED 补光、APP 远程控制，功能面最全。
+- [mcu-coder/stm32_environmental_monitoring](https://github.com/mcu-coder/stm32_environmental_monitoring)（20 星，已核验）：农业大棚环境监测系统（毕业设计案例）。
+- [lidonghang-02/greenhouse_control_system](https://github.com/lidonghang-02/greenhouse_control_system)（13 星，已核验）：基于 STM32 的温室控制系统。
 
 ### 6.2 病虫害检测（视觉组）
-- [pratikkayal/PlantDoc-Dataset](https://github.com/pratikkayal/PlantDoc-Dataset)（427★）✅：PlantDoc 官方数据集仓库（CODS-COMAD 2020 论文配套）。
-- PlantVillage 数据集（Kaggle [abdallahalidev/plantvillage-dataset](https://www.kaggle.com/datasets/abdallahalidev/plantvillage-dataset)）✅：5 万+ 叶片图、38 类。
-- [ajinkyapawar11/yolov8-crop-disease-monitoring](https://github.com/ajinkyapawar11/yolov8-crop-disease-monitoring)（0★，2025-07 更新）✅：YOLOv8 温室作物病害实时检测（菠菜/生菜/白菜），场景最接近，作架构参考。
-- [SHN2004/Plant_Disease_Detection](https://github.com/SHN2004/Plant_Disease_Detection)（9★）✅：ESP32-CAM + 深度学习实时植物病害检测全链路。
-- [vishnuskandha/strawberry-disease-detection](https://github.com/vishnuskandha/strawberry-disease-detection)（0★，2026-04 更新）✅：YOLOv8 训练 + Streamlit 应用，工程量最小、最快出结果。
-- [Kuipyy/plant-disease-agent](https://github.com/Kuipyy/plant-disease-agent)（0★，2026-07 更新）✅：LLM 编排的病害诊断智能体（分类器 + Grad-CAM 可解释 + RAG 防治建议），与智能体想法直接对口。
+- [pratikkayal/PlantDoc-Dataset](https://github.com/pratikkayal/PlantDoc-Dataset)（427 星，已核验）：PlantDoc 官方数据集仓库（CODS-COMAD 2020 论文配套）。
+- PlantVillage 数据集（Kaggle [abdallahalidev/plantvillage-dataset](https://www.kaggle.com/datasets/abdallahalidev/plantvillage-dataset)，已核验）：5 万+ 叶片图、38 类。
+- [ajinkyapawar11/yolov8-crop-disease-monitoring](https://github.com/ajinkyapawar11/yolov8-crop-disease-monitoring)（0 星，2025-07 更新，已核验）：YOLOv8 温室作物病害实时检测（菠菜/生菜/白菜），场景最接近，作架构参考。
+- [SHN2004/Plant_Disease_Detection](https://github.com/SHN2004/Plant_Disease_Detection)（9 星，已核验）：ESP32-CAM + 深度学习实时植物病害检测全链路。
+- [vishnuskandha/strawberry-disease-detection](https://github.com/vishnuskandha/strawberry-disease-detection)（0 星，2026-04 更新，已核验）：YOLOv8 训练 + Streamlit 应用，工程量最小、最快出结果。
+- [Kuipyy/plant-disease-agent](https://github.com/Kuipyy/plant-disease-agent)（0 星，2026-07 更新，已核验）：LLM 编排的病害诊断智能体（分类器 + Grad-CAM 可解释 + RAG 防治建议），与智能体想法直接对口。
 
 ### 6.3 生长状况分析
-- [Tharinda-Pamindu/Plant-Growth-anaysis-measure-project](https://github.com/Tharinda-Pamindu/Plant-Growth-anaysis-measure-project)（1★）✅：视觉测量叶片数/株高/健康度，正合"自动分析生长状况"。
-- [mriglab/GroMo-Plant-Growth-Modeling-with-Multiview-Images](https://github.com/mriglab/GroMo-Plant-Growth-Modeling-with-Multiview-Images)（6★，2026-04 更新）✅：多视角图像生长建模竞赛项目，作进阶参考。
+- [Tharinda-Pamindu/Plant-Growth-anaysis-measure-project](https://github.com/Tharinda-Pamindu/Plant-Growth-anaysis-measure-project)（1 星，已核验）：视觉测量叶片数/株高/健康度，正合"自动分析生长状况"。
+- [mriglab/GroMo-Plant-Growth-Modeling-with-Multiview-Images](https://github.com/mriglab/GroMo-Plant-Growth-Modeling-with-Multiview-Images)（6 星，2026-04 更新，已核验）：多视角图像生长建模竞赛项目，作进阶参考。
 
 ### 6.4 农业大模型 / 智能体
-- 司农（南京农业大学，2026-01 发布）✅：国内首个农业开源大语言模型，8B/32B，魔搭+GitHub 开源（IT之家、中国农科院官网、新华报业网等多家交叉报道）。
-- [zhiweihu1103/AgriAgent](https://github.com/zhiweihu1103/AgriAgent)（稷丰，125★）✅：首个开源中文农业多模态大模型（图像+文本+气象）。
-- [csg2008/InternLMAgricultureAssistant](https://github.com/csg2008/InternLMAgricultureAssistant)（3★）✅：书生浦语农业助手——传感器+执行器+大模型自动控制大棚环境，理念最接近的完整参考。
-- [nirmal2i43a5/AgriGen](https://github.com/nirmal2i43a5/AgriGen)（0★，2026-02 更新）✅：RAG + Llama 3.3 农业咨询助手。
-- [Shuvam-Banerji-Seal/AgriIR](https://github.com/Shuvam-Banerji-Seal/AgriIR)（6★，ECIR'26）✅：农业 RAG 六阶段流水线，检索+引用可溯源。
-- [vios-s/PhenoAssistant](https://github.com/vios-s/PhenoAssistant)（35★，2026-07 更新）✅：多智能体植物表型分析系统，智能体架构参考。
-- [langgenius/dify](https://github.com/langgenius/dify)（151k★）✅：开源智能体/工作流平台，官方文档确认 HTTP Request 节点可调外部 API（设备控制通道）。
-- [infiniflow/ragflow](https://github.com/infiniflow/ragflow)（87k★）✅：开源 RAG 引擎，知识库问答底座。
-- [ultralytics/ultralytics](https://github.com/ultralytics/ultralytics)（60k★）✅：YOLOv8/YOLO11 框架。
+- 司农（南京农业大学，2026-01 发布，已核验）：国内首个农业开源大语言模型，8B/32B，魔搭+GitHub 开源（IT之家、中国农科院官网、新华报业网等多家交叉报道）。
+- [zhiweihu1103/AgriAgent](https://github.com/zhiweihu1103/AgriAgent)（稷丰，125 星，已核验）：首个开源中文农业多模态大模型（图像+文本+气象）。
+- [csg2008/InternLMAgricultureAssistant](https://github.com/csg2008/InternLMAgricultureAssistant)（3 星，已核验）：书生浦语农业助手——传感器+执行器+大模型自动控制大棚环境，理念最接近的完整参考。
+- [nirmal2i43a5/AgriGen](https://github.com/nirmal2i43a5/AgriGen)（0 星，2026-02 更新，已核验）：RAG + Llama 3.3 农业咨询助手。
+- [Shuvam-Banerji-Seal/AgriIR](https://github.com/Shuvam-Banerji-Seal/AgriIR)（6 星，ECIR'26，已核验）：农业 RAG 六阶段流水线，检索+引用可溯源。
+- [vios-s/PhenoAssistant](https://github.com/vios-s/PhenoAssistant)（35 星，2026-07 更新，已核验）：多智能体植物表型分析系统，智能体架构参考。
+- [langgenius/dify](https://github.com/langgenius/dify)（151k 星，已核验）：开源智能体/工作流平台，官方文档确认 HTTP Request 节点可调外部 API（设备控制通道）。
+- [infiniflow/ragflow](https://github.com/infiniflow/ragflow)（87k 星，已核验）：开源 RAG 引擎，知识库问答底座。
+- [ultralytics/ultralytics](https://github.com/ultralytics/ultralytics)（60k 星，已核验）：YOLOv8/YOLO11 框架。
 
 ### 6.5 云平台 / 小程序 / 可视化
-- [roinli/HUIZHI-nongyeOS-cloud](https://github.com/roinli/HUIZHI-nongyeOS-cloud)（农业岛，347★）✅：Java+Vue+Uni-app 完整开源农业物联网平台，温棚监控/设备控制/大屏/小程序全有，可二开。
-- [CJL-build/-](https://github.com/CJL-build/-)（4★）✅：完整 IoT 项目（Vue 网页+微信小程序+SpringBoot 后端+硬件），含"湿度+温度+光照综合判断自动浇水"逻辑。
-- [node-red/node-red](https://github.com/node-red/node-red)（23.5k★）✅：MQTT 数据可视化低代码工具。
-- [emqx/emqx](https://github.com/emqx/emqx)（16.5k★）✅：MQTT Broker。
-- [OneNET](https://open.iot.10086.cn)（中国移动物联网开放平台）✅：免费云平台，STM32+ESP8266 接入教程量大。
+- [roinli/HUIZHI-nongyeOS-cloud](https://github.com/roinli/HUIZHI-nongyeOS-cloud)（农业岛，347 星，已核验）：Java+Vue+Uni-app 完整开源农业物联网平台，温棚监控/设备控制/大屏/小程序全有，可二开。
+- [CJL-build/-](https://github.com/CJL-build/-)（4 星，已核验）：完整 IoT 项目（Vue 网页+微信小程序+SpringBoot 后端+硬件），含"湿度+温度+光照综合判断自动浇水"逻辑。
+- [node-red/node-red](https://github.com/node-red/node-red)（23.5k 星，已核验）：MQTT 数据可视化低代码工具。
+- [emqx/emqx](https://github.com/emqx/emqx)（16.5k 星，已核验）：MQTT Broker。
+- [OneNET](https://open.iot.10086.cn)（中国移动物联网开放平台，已核验）：免费云平台，STM32+ESP8266 接入教程量大。
 
 ## 7. 硬件清单
 
