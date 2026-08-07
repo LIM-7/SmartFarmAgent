@@ -304,6 +304,6 @@ const doc = new Document({
 });
 
 Packer.toBuffer(doc).then((buf) => {
-  fs.writeFileSync("PROPOSAL_ADVISOR.docx", buf);
-  console.log("PROPOSAL_ADVISOR.docx written, bytes = " + buf.length);
+  fs.writeFileSync("Proposal.docx", buf);
+  console.log("Proposal.docx written, bytes = " + buf.length);
 });
