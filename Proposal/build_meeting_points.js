@@ -89,7 +89,7 @@ children.push(new Paragraph({
   spacing: { before: 120, after: 40 },
 }));
 children.push(new Paragraph({
-  children: [new TextRun({ text: "2026-08-10 现场汇报  |  配套方案 v1.7", font: FONT, size: 22 })],
+  children: [new TextRun({ text: "2026-08-10 现场汇报  |  配套方案 v1.7.1", font: FONT, size: 22 })],
   alignment: AlignmentType.CENTER,
   spacing: { after: 80 },
 }));
@@ -128,7 +128,7 @@ children.push(heading("四、需要和导师对齐的事项", 1));
 children.push(bullet("项目边界：确认“最小闭环原型”的定位，不做全平台。"));
 children.push(bullet("里程碑节奏：24 周是否与学期安排匹配（M1 在第 3—6 周）。"));
 children.push(bullet("资源：实验室是否有可用的温室或场地，已有器件清单是否需要补充。"));
-children.push(bullet("参赛定位：是否按智慧农业创新大赛方向包装作品（闭环能力原型，还是按单一赛道做成具体作品）。"));
+children.push(bullet("参赛定位：建议主攻「设施小番茄采摘机器人」赛道（场景与链路契合度最高），备选「智能农机作业控制」；按单一赛道包装时，把喷药、浇水执行器替换为采摘装置即可。"));
 
 children.push(heading("五、汇报后立即启动", 1));
 children.push(bullet("M1：整理 SmartAgriculture 代码，跑通 传感器采集 → OLED → 继电器 → 串口帧协议 → LabVIEW。"));

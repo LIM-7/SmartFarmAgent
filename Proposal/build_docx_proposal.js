@@ -143,6 +143,7 @@ children.push(table(
   [AlignmentType.CENTER, AlignmentType.LEFT, AlignmentType.LEFT]
 ));
 children.push(spacer());
+children.push(body("综合来看，本项目与「设施小番茄采摘机器人」赛道契合度最高：两者同属设施农业场景，视觉识别、智能体决策与执行器联动的链路一致，本项目的 ESP32-CAM 视觉与 STM32 控制链可直接复用，只需把浇水、喷药等执行器替换为采摘装置；与「智能农机作业控制」赛道则在设备级控制闭环上同构。其余赛道需要更换感知与执行模块，但“感知—决策—执行”的通用底座可以复用。"));
 children.push(body("**定位：**以 STM32 感知执行端 + 云端大模型智能体，做一个面向智慧农业竞赛与科研的低成本“闭环能力原型”，聚焦大模型决策到设备动作的完整链路，可针对具体赛道快速适配。"));
 
 // 3 系统总体架构
@@ -256,8 +257,8 @@ children.push(bullet("[EMQX](https://github.com/emqx/emqx)（16.5k 星）/ [Node
 
 const doc = new Document({
   title: "SmartFarmAgent 智慧农业智能体系统——项目方案",
-  subject: "项目方案（导师提交版，v1.7）",
-  description: "导师提交版 v1.7：背景、行业对标与定位、架构、功能、数据链路、可行性、里程碑、创新点、风险与主要开源参考。",
+  subject: "项目方案（导师提交版，v1.7.1）",
+  description: "导师提交版 v1.7.1：背景、行业对标与定位、架构、功能、数据链路、可行性、里程碑、创新点、风险与主要开源参考。",
   creator: "LIM",
   styles: {
     default: {
