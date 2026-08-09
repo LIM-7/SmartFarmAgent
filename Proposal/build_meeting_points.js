@@ -84,12 +84,12 @@ const spacer = () => new Paragraph({ children: [], spacing: { after: 60 } });
 const children = [];
 
 children.push(new Paragraph({
-  children: [new TextRun({ text: "SmartFarmAgent 导师现场汇报交流要点", font: FONT_HEAD, size: 40, bold: true })],
+  children: [new TextRun({ text: "SmartFarmAgent 导师汇报与参赛准备要点", font: FONT_HEAD, size: 40, bold: true })],
   alignment: AlignmentType.CENTER,
   spacing: { before: 120, after: 40 },
 }));
 children.push(new Paragraph({
-  children: [new TextRun({ text: "2026-08-10 现场汇报  |  配套方案 v1.6", font: FONT, size: 22 })],
+  children: [new TextRun({ text: "2026-08-10 现场汇报  |  配套方案 v1.7", font: FONT, size: 22 })],
   alignment: AlignmentType.CENTER,
   spacing: { after: 80 },
 }));
@@ -101,24 +101,24 @@ children.push(new Paragraph({
 
 children.push(heading("一、汇报结构（建议 5 分钟）", 1));
 children.push(numItem("一句话定位：以 STM32 为感知执行端、云端大模型智能体为决策大脑，实现“感知 → 决策 → 执行”全闭环的智慧农业系统。"));
-children.push(numItem("为什么做：以青海三江集团为例，大型农牧企业已系统规划智慧农业建设，但企业级平台重软件集成、成本高；市面常见产品停留在阈值控制或知识问答，没有把智能决策闭环到设备。"));
+children.push(numItem("为什么做：农业农村部 2026 智慧农业创新大赛六大赛道集中在智能体、IoT、机器人方向，强调感知、决策、执行一体化；行业痛点（人工巡检、病害滞后、水肥浪费）与企业级平台重软件集成、大模型停在问答层的问题仍待解决。"));
 children.push(numItem("怎么做：六层架构（感知执行 → 通信 → 边缘 → 云平台 → 智能决策 → 展示），智能体输出 JSON 设备指令，本地规则优先兜底。"));
 children.push(numItem("做到哪：已有 SmartAgriculture 雏形（STM32 传感器、继电器、OLED、串口协议），已学 GPIO、ADC、I2C、SPI、DMA、串口；方案 v1.6 已按行业案例细化。"));
 children.push(numItem("下一步：启动 M1 感知-控制闭环（第 3—6 周），同步搭建 Python、YOLO、Dify 环境。"));
 
 children.push(heading("二、电梯版话术（30 秒）", 1));
-children.push(body("对标青海三江集团等企业级智慧农业方案，本项目用低成本硬件原型复现其中最核心、最难落地的“大模型决策到设备执行”闭环：STM32 采集土壤、光照、温湿度，ESP32-CAM 拍照做病害识别，云端智能体综合判断后下发设备指令，本地规则永远优先兜底。"));
+children.push(body("面向 2026 智慧农业创新大赛的智能体、IoT 方向，本项目用低成本硬件原型实现“感知—决策—执行”闭环：STM32 采集土壤、光照、温湿度，ESP32-CAM 拍照做病害识别，云端智能体综合判断后下发设备指令，本地规则永远优先兜底。"));
 
 children.push(heading("三、导师可能问的问题与应对", 1));
 children.push(table(
   ["问题", "应对"],
   [
-    ["和市面方案（如三江集团企业平台）有什么区别？", "企业平台重软件集成、依赖专业团队；本项目做低成本硬件闭环原型，验证“智能决策→设备执行”这一最难落地的环节，硬件成本低、可复制"],
+    ["和市面企业级智慧农业平台有什么区别？", "企业平台重软件集成、依赖专业团队；本项目做低成本硬件闭环原型，验证“智能决策→设备执行”这一最难落地的环节，硬件成本低、可复制"],
     ["为什么用大模型决策，阈值规则不够吗？", "阈值只能处理单因子场景；智能体综合多传感器、视觉和历史数据，输出可解释指令，还能承担农技问答；本地规则仍优先兜底"],
     ["视觉识别效果怎么保证？", "PlantDoc、PlantVillage 公开数据集预训练加自采微调，范围先缩到 3—5 类常见病害；初期云端推理，边缘只拍照"],
     ["时间不够，怎么保证进度？", "主线 M1—M2 必保（本地闭环加上云）；M3、M4 有明确降级方案（合并施肥、给药，生长分析降级为拍照加周报）"],
     ["预算和器件？", "硬件 15 项清单，多数已有，总成本低；软件全部开源免费"],
-    ["和三江集团这类方案比，创新点在哪？", "全链路自研、边缘-云协同、断网兜底、低成本可复制；企业方案偏平台集成，本项目偏硬件闭环实现"],
+    ["相对企业级平台，创新点在哪？", "全链路自研、边缘-云协同、断网兜底、低成本可复制；企业方案偏平台集成，本项目偏硬件闭环实现"],
   ],
   [3400, 5672],
   [AlignmentType.CENTER, AlignmentType.LEFT]
@@ -128,14 +128,16 @@ children.push(heading("四、需要和导师对齐的事项", 1));
 children.push(bullet("项目边界：确认“最小闭环原型”的定位，不做全平台。"));
 children.push(bullet("里程碑节奏：24 周是否与学期安排匹配（M1 在第 3—6 周）。"));
 children.push(bullet("资源：实验室是否有可用的温室或场地，已有器件清单是否需要补充。"));
+children.push(bullet("参赛定位：是否按智慧农业创新大赛方向包装作品（闭环能力原型，还是按单一赛道做成具体作品）。"));
 
 children.push(heading("五、汇报后立即启动", 1));
 children.push(bullet("M1：整理 SmartAgriculture 代码，跑通 传感器采集 → OLED → 继电器 → 串口帧协议 → LabVIEW。"));
 children.push(bullet("搭建 Python + YOLOv8 + Dify 环境，注册 EMQX、OneNET。"));
 children.push(bullet("学完 I2C，修复 BH1750 开漏问题；SPI 接入 W25Q64。"));
+children.push(bullet("梳理大赛报名与材料要求（报名表、说明书、演示视频），确定主攻赛道与作品叙事。"));
 
 const doc = new Document({
-  title: "SmartFarmAgent 导师现场汇报交流要点",
+  title: "SmartFarmAgent 导师汇报与参赛准备要点",
   subject: "2026-08-10 现场汇报",
   creator: "LIM",
   styles: {

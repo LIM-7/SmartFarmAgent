@@ -10,9 +10,9 @@
 - `VERSIONS.md`：各版本声明与备注
 - `build_docx.js`：完整版 Word 生成脚本
 - `md2docx.py`：通用 Markdown → Word 转换工具（python-docx）
-- `Proposal/Proposal.md` / `.tex` / `.pdf` / `.docx`：导师提交版（v1.6，含行业对标与项目定位）
+- `Proposal/Proposal.md` / `.tex` / `.pdf` / `.docx`：导师提交版（v1.7，含与 2026 智慧农业创新大赛的结合点）
 - `Proposal/build_docx_proposal.js`：导师版 Word 生成脚本
-- `Proposal/Meeting_Points.md` / `.docx`：导师现场汇报交流要点（2026-08-10 汇报用，含话术、问答应对与行动项）
+- `Proposal/Meeting_Points.md` / `.docx`：导师汇报与参赛准备要点（2026-08-10 汇报用，含话术、问答应对、参赛定位与行动项）
 - 命名约定：根目录 `PROPOSAL.*`（全大写）= 内部完整版；`Proposal/` 目录内 `Proposal.*`（首字母大写）= 导师提交版（Windows 大小写不敏感，用目录区分大小写）
 
 ## 版本历史
