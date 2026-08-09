@@ -257,8 +257,8 @@ children.push(bullet("[EMQX](https://github.com/emqx/emqx)（16.5k 星）/ [Node
 
 const doc = new Document({
   title: "SmartFarmAgent 智慧农业智能体系统——项目方案",
-  subject: "项目方案（导师提交版，v1.7.1）",
-  description: "导师提交版 v1.7.1：背景、行业对标与定位、架构、功能、数据链路、可行性、里程碑、创新点、风险与主要开源参考。",
+  subject: "项目方案（导师提交版，v1.7.2）",
+  description: "导师提交版 v1.7.2：背景、行业对标与定位、架构、功能、数据链路、可行性、里程碑、创新点、风险与主要开源参考。",
   creator: "LIM",
   styles: {
     default: {

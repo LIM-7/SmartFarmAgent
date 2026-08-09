@@ -89,7 +89,7 @@ children.push(new Paragraph({
   spacing: { before: 120, after: 40 },
 }));
 children.push(new Paragraph({
-  children: [new TextRun({ text: "2026-08-10 现场汇报  |  配套方案 v1.7.1", font: FONT, size: 22 })],
+  children: [new TextRun({ text: "2026-08-10 现场汇报  |  配套方案 v1.7.2", font: FONT, size: 22 })],
   alignment: AlignmentType.CENTER,
   spacing: { after: 80 },
 }));
@@ -103,7 +103,7 @@ children.push(heading("一、汇报结构（建议 5 分钟）", 1));
 children.push(numItem("一句话定位：以 STM32 为感知执行端、云端大模型智能体为决策大脑，实现“感知 → 决策 → 执行”全闭环的智慧农业系统。"));
 children.push(numItem("为什么做：农业农村部 2026 智慧农业创新大赛六大赛道集中在智能体、IoT、机器人方向，强调感知、决策、执行一体化；行业痛点（人工巡检、病害滞后、水肥浪费）与企业级平台重软件集成、大模型停在问答层的问题仍待解决。"));
 children.push(numItem("怎么做：六层架构（感知执行 → 通信 → 边缘 → 云平台 → 智能决策 → 展示），智能体输出 JSON 设备指令，本地规则优先兜底。"));
-children.push(numItem("做到哪：已有 SmartAgriculture 雏形（STM32 传感器、继电器、OLED、串口协议），已学 GPIO、ADC、I2C、SPI、DMA、串口；方案 v1.6 已按行业案例细化。"));
+children.push(numItem("做到哪：已有 SmartAgriculture 雏形（STM32 传感器、继电器、OLED、串口协议），已学 GPIO、ADC、I2C、SPI、DMA、串口；方案 v1.7.1 已按大赛方向细化。"));
 children.push(numItem("下一步：启动 M1 感知-控制闭环（第 3—6 周），同步搭建 Python、YOLO、Dify 环境。"));
 
 children.push(heading("二、电梯版话术（30 秒）", 1));
