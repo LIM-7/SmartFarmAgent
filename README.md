@@ -4,14 +4,15 @@
 
 ## 文件说明
 
-- `PROPOSAL.md`：开题链路正文（Markdown 源）
+- `PROPOSAL.md`：开题链路正文（Markdown 源，内部完整版）
 - `PROPOSAL.tex` / `PROPOSAL.pdf`：LaTeX 源与 PDF 成品（xelatex 编译两遍）
 - `PROPOSAL.docx`：Word 成品（三线表、黑体标题、五号表内文字，按 word-typesetting 规范）
 - `VERSIONS.md`：各版本声明与备注
-- `build_docx.js`：Word 生成脚本（`npm install docx` 后 `node build_docx.js`）
+- `build_docx.js`：完整版 Word 生成脚本
 - `md2docx.py`：通用 Markdown → Word 转换工具（python-docx）
-- `Proposal/Proposal.md` / `.tex` / `.pdf` / `.docx`：导师提交精简版（v1.5.1，4 页）
-- `Proposal/build_docx_proposal.js`：导师版 Word 生成脚本（在 `Proposal/` 目录内 `npm install docx` 后 `node build_docx_proposal.js`）
+- `Proposal/Proposal.md` / `.tex` / `.pdf` / `.docx`：导师提交版（v1.6，含行业对标与项目定位）
+- `Proposal/build_docx_proposal.js`：导师版 Word 生成脚本
+- `Proposal/Meeting_Points.md` / `.docx`：导师现场汇报交流要点（2026-08-10 汇报用，含话术、问答应对与行动项）
 - 命名约定：根目录 `PROPOSAL.*`（全大写）= 内部完整版；`Proposal/` 目录内 `Proposal.*`（首字母大写）= 导师提交版（Windows 大小写不敏感，用目录区分大小写）
 
 ## 版本历史
