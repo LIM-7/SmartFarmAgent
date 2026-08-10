@@ -126,7 +126,7 @@ children.push(new Paragraph({
 children.push(heading("1. 项目背景与痛点", 1));
 children.push(bullet("行业痛点：传统种养管理依赖人工巡检与经验调控，存在病害发现滞后、水肥浪费、环境调控不及时等问题；企业级智慧农业平台功能完整但重软件集成、成本高，市面常见产品以阈值规则控制为主，大模型应用停留在“知识问答”层，均未把智能决策闭环到设备执行。"));
 children.push(bullet("竞赛方向：农业农村部 2026 年智慧农业创新大赛六大赛道（智能农机作业控制、无人机巡田、激光除草机器人、设施小番茄采摘机器人、家禽巡检机器人、鱼群智能检测装备）集中在“智能体 / IoT + 机器人”方向，强调感知、决策、执行一体化落地。"));
-children.push(bullet("技术窗口：农业开源大模型与 RAG 框架成熟可用（司农、Dify、RAGFlow 等），硬件成本低，整条链路可以自研，适合以低成本原型参赛。"));
+children.push(bullet("技术窗口：农业开源大模型与 RAG 框架成熟可用（司农、RAGFlow、Dify 等）；ESP32 单芯片即可完成数据采集、拍照与控制，Node.js + Vue 平台生态成熟，硬件与软件成本都低，适合以低成本原型参赛。"));
 
 // 2 与 2026 智慧农业创新大赛的结合点
 children.push(heading("2. 与 2026 智慧农业创新大赛的结合点", 1));
@@ -134,7 +134,7 @@ children.push(body("本项目以低成本硬件原型实现“感知—决策—
 children.push(table(
   ["大赛赛道", "本项目对应能力", "结合说明"],
   [
-    ["智能农机作业控制", "STM32 设备控制链路（继电器/泵/灯/喷药）", "设备级“指令—执行—回传”闭环可迁移到农机作业控制单元"],
+    ["智能农机作业控制", "ESP32 设备控制链路（继电器/泵/灯/喷药）", "设备级“指令—执行—回传”闭环可迁移到农机作业控制单元"],
     ["无人机巡田解决方案", "视觉识别 + 智能体决策链路", "巡田影像的“识别—分析—处方”流程与本项目视觉+决策链路同构"],
     ["设施采摘、巡检机器人", "ESP32-CAM 视觉 + 执行器联动", "视觉识别触发设备动作的架构可复用到采摘、巡检场景"],
     ["家禽巡检、鱼群检测", "感知上云 + 异常告警 + 自动处置", "传感采集与云端判别的模式一致，更换传感器与模型即可适配"],
@@ -143,21 +143,20 @@ children.push(table(
   [AlignmentType.CENTER, AlignmentType.LEFT, AlignmentType.LEFT]
 ));
 children.push(spacer());
-children.push(body("综合来看，本项目与「设施小番茄采摘机器人」赛道契合度最高：两者同属设施农业场景，视觉识别、智能体决策与执行器联动的链路一致，本项目的 ESP32-CAM 视觉与 STM32 控制链可直接复用，只需把浇水、喷药等执行器替换为采摘装置；与「智能农机作业控制」赛道则在设备级控制闭环上同构。其余赛道需要更换感知与执行模块，但“感知—决策—执行”的通用底座可以复用。"));
-children.push(body("**定位：**以 STM32 感知执行端 + 云端大模型智能体，做一个面向智慧农业竞赛与科研的低成本“闭环能力原型”，聚焦大模型决策到设备动作的完整链路，可针对具体赛道快速适配。"));
+children.push(body("综合来看，本项目与「设施小番茄采摘机器人」赛道契合度最高：两者同属设施农业场景，视觉识别、智能体决策与执行器联动的链路一致，本项目的 ESP32-CAM 视觉与控制链可直接复用，只需把浇水、喷药等执行器替换为采摘装置；与「智能农机作业控制」赛道则在设备级控制闭环上同构。其余赛道需要更换感知与执行模块，但“感知—决策—执行”的通用底座可以复用。"));
+children.push(body("**定位：**以 ESP32 感知执行端 + Node.js/Vue 平台 + 云端大模型智能体，做一个面向智慧农业竞赛与科研的低成本“闭环能力原型”，聚焦大模型决策到设备动作的完整链路，可针对具体赛道快速适配。"));
 
 // 3 系统总体架构
-// 3 系统总体架构
-children.push(heading("2. 系统总体架构", 1));
+children.push(heading("3. 系统总体架构", 1));
 children.push(table(
   ["层级", "名称", "组成与职责", "关键技术"],
   [
-    ["L6", "展示层", "微信小程序 / H5 大屏 / LabVIEW 上位机", "前端、上位机"],
+    ["L6", "展示层", "Vue 3 Web 大屏 / H5：实时曲线、设备控制、农技问答、视觉告警", "Vue、ECharts、WebSocket"],
     ["L5", "智能决策层", "大模型智能体（LLM+RAG）→ JSON 设备指令 + 农技问答（核心创新）；视觉服务（YOLO 病害/生长分析）", "LLM、RAG、视觉"],
-    ["L4", "云端平台层", "MQTT Broker（EMQX/OneNET）→ 时序存储 → Node-RED 可视化", "MQTT、时序存储"],
-    ["L3", "边缘层", "ESP32-CAM 拍照/轻量推理；断网规则兜底（本地优先）", "边缘计算、轻量推理"],
-    ["L2", "通信层", "USART 文本帧协议 + ESP8266 MQTT", "串口、MQTT"],
-    ["L1", "感知执行层", "STM32F103C8T6 + 传感器 + 继电器/泵/灯/喷药", "GPIO、ADC、I2C、SPI"],
+    ["L4", "云端平台层", "Node.js 后端：MQTT 接入（mqtt.js）→ 时序存储 → REST/WebSocket API；智能体编排", "Node.js、MQTT、时序存储"],
+    ["L3", "边缘层", "ESP32-CAM 定时拍照上传；断网规则兜底（本地优先）", "边缘计算、定时任务"],
+    ["L2", "通信层", "ESP32 内置 Wi-Fi：MQTT（JSON 上行/下行）+ HTTP 图片上传", "Wi-Fi、MQTT"],
+    ["L1", "感知执行层", "ESP32 单芯片：传感器采集 + 继电器/泵/灯/喷药 + OLED + microSD 日志", "GPIO、ADC、I2C、PWM"],
   ],
   [800, 1800, 4600, 1872],
   [AlignmentType.CENTER, AlignmentType.CENTER, AlignmentType.LEFT, AlignmentType.CENTER]
@@ -166,56 +165,56 @@ children.push(spacer());
 children.push(body("**安全原则：**本地阈值规则永远优先于云端指令（断网自持、误操作兜底），云端智能体指令走白名单。"));
 
 // 4 功能模块
-children.push(heading("3. 功能模块", 1));
+children.push(heading("4. 功能模块", 1));
 children.push(table(
   ["功能", "实现方案", "难度", "可行性依据"],
   [
-    ["自动浇水/施肥", "土壤湿度+光照综合判断；继电器驱动水泵/蠕动泵", "中", "传感器与继电器已有；开源整机项目已验证"],
-    ["环境自动调控", "DHT11/BH1750 → 风扇/加热/补光灯；PWM 调光（PID 可选）", "中", "传感器已有；PWM/PID 为已学内容"],
-    ["病虫害检测+给药", "摄像头定拍 → YOLOv8（先云后边）→ 置信度达标 → 喷药泵", "高", "PlantDoc/PlantVillage 公开数据集 + 多个 ESP32-CAM/YOLO 先例"],
+    ["自动浇水/施肥", "土壤湿度+光照综合判断；继电器驱动水泵/蠕动泵", "中", "已有土壤传感器+继电器；ESP32 整机案例已验证"],
+    ["环境自动调控", "DHT11/BH1750 → 风扇/加热/补光灯；PWM 调光（PID 可选）", "中", "传感器已有；PWM 知识可迁移"],
+    ["病虫害检测+给药", "ESP32-CAM 定时拍照上传 → YOLOv8（先云后边）→ 置信度达标 → 喷药泵", "高", "PlantDoc/PlantVillage 公开数据集 + ESP32-CAM/YOLO 全链路先例"],
     ["生长状况分析", "定距定时拍照 → 叶片数/株高/颜色统计 → 大模型生成周报", "高", "视觉测量工具包开源可用"],
-    ["农技知识问答", "种植/病虫害/用药知识库 → RAG 检索增强 → 结构化方案+来源标注", "中", "司农/DeepSeek + Dify/RAGFlow 已核验，农业领域 RAG 问答已有成熟落地案例"],
-    ["智能体决策", "传感器+检测+历史 → 大模型（司农/DeepSeek）→ 设备指令+解释", "高", "Dify HTTP 节点可调外部 API；农业大模型已开源"],
-    ["数据中台/展示", "MQTT 上行 → 时序存储 → 小程序/H5；W25Q64 本地日志", "中", "EMQX/Node-RED 成熟；农业岛平台可二开"],
+    ["农技知识问答", "种植/病虫害/用药知识库 → RAG 检索增强 → 结构化方案+来源标注", "中", "司农/DeepSeek + RAGFlow 已核验，Node.js 可调其 HTTP API"],
+    ["智能体决策", "Node.js 编排：传感器+视觉+历史 → 大模型（司农/DeepSeek）→ 指令+解释", "高", "LLM 兼容 API + MQTT 下行链路已验证"],
+    ["数据中台/展示", "MQTT 上行 → Node.js 时序存储 → Vue 大屏；microSD 断网日志", "中", "Express/mqtt.js/ECharts 成熟；EMQX 已核验"],
   ],
   [2200, 3000, 700, 3172],
   [AlignmentType.CENTER, AlignmentType.LEFT, AlignmentType.CENTER, AlignmentType.LEFT]
 ));
 
 // 5 数据链路
-children.push(heading("4. 数据链路", 1));
+children.push(heading("5. 数据链路", 1));
 children.push(table(
   ["环节", "内容", "输出"],
   [
-    ["感知", "BH1750/DHT11/土壤 → STM32 采集打包（文本帧）；ESP32-CAM 拍照上传（HTTP/MQTT）", "数据帧 / 图片"],
-    ["通信", "USART 帧 + ESP8266 MQTT；本地接 LabVIEW 调试 + W25Q64 日志", "上行数据"],
-    ["云端", "MQTT Broker（EMQX/OneNET）→ 时序存储 + Node-RED 可视化", "时序数据"],
+    ["感知", "BH1750/DHT11/土壤 → ESP32 采集打包（JSON）；ESP32-CAM 定时拍照", "数据 / 图片"],
+    ["通信", "ESP32 Wi-Fi：MQTT 上行情报 + HTTP 图片上传；断网时 microSD 本地日志", "上行数据 / 图片"],
+    ["云端", "Node.js 后端（mqtt.js）订阅 → 时序存储 → REST/WebSocket API", "时序数据"],
     ["AI", "视觉服务（YOLO 病害检测/生长分析）→ 结果入事件队列；智能体（LLM+RAG）综合传感器+视觉+历史，输出设备指令与农技方案", "决策 JSON / 问答方案"],
-    ["执行", "MQTT 下行指令 → 网关转 HTTP/串口 → STM32 解析 → 继电器/泵/灯/喷药", "设备动作"],
-    ["闭环", "执行状态回传 → 数据入库 → 小程序/大屏展示 + 智能体下次决策依据", "反馈数据"],
+    ["执行", "MQTT 下行指令 → ESP32 解析（白名单）→ 继电器/泵/灯/喷药", "设备动作"],
+    ["闭环", "执行状态回传 → 数据入库 → Vue 大屏展示 + 智能体下次决策依据", "反馈数据"],
   ],
   [1400, 5900, 1772],
   [AlignmentType.CENTER, AlignmentType.LEFT, AlignmentType.CENTER]
 ));
 
 // 6 技术可行性
-children.push(heading("5. 技术可行性", 1));
-children.push(numItem("硬件与嵌入式：全部器件为 STM32 生态常用模块，与现有学习内容一一对应，参考整机项目已跑通相同硬件组合。"));
-children.push(numItem("视觉检测：PlantDoc（427 星）/ PlantVillage（5 万+ 图、38 类）公开数据集可用，YOLOv8 框架成熟（Ultralytics 60k 星），已有温室病害检测与 ESP32-CAM 实时检测先例。"));
-children.push(numItem("智能体链路：司农（国内首个农业开源大语言模型，8B/32B）与 AgriAgent（125 星）均已开源；Dify 官方确认 HTTP 节点可调外部 API，智能体到设备路径可行；RAG 农技问答与病虫害识别在农业领域已有成熟落地案例。"));
-children.push(numItem("云平台：EMQX（16.5k 星）、Node-RED（23.5k 星）、农业岛（347 星）均已核验；OneNET 免费可用。"));
-children.push(numItem("已知约束：ESP32-CAM 算力有限，初期视觉推理走云端；司农 32B 本地部署显存要求高，初期用 8B 或 DeepSeek API。"));
+children.push(heading("6. 技术可行性", 1));
+children.push(numItem("硬件与嵌入式：ESP32 生态成熟（arduino-esp32 官方核心，17k+ 星，持续更新）；ESP32-CAM 单板集成摄像头、Wi-Fi 与 microSD，外接传感器/继电器案例丰富；现有 I2C、SPI、串口、PWM 知识可直接迁移。"));
+children.push(numItem("视觉检测：PlantDoc（427 星）/ PlantVillage（5 万+ 图、38 类）公开数据集可用，YOLOv8 框架成熟（Ultralytics 60k 星），已有温室病害检测与 ESP32-CAM 全链路检测先例。"));
+children.push(numItem("智能体链路：司农（国内首个农业开源大语言模型，8B/32B）与 AgriAgent（125 星）均已开源；RAGFlow/Dify 提供 HTTP API，Node.js 后端可直接调用，智能体到设备路径可行。"));
+children.push(numItem("平台：Express（69k 星）、MQTT.js（9k 星）、Vue 3（54k 星）、ECharts（67k 星）均已核验；EMQX（16.5k 星）与 OneNET 支持 ESP32 直连，免费可用。"));
+children.push(numItem("已知约束：ESP32-CAM 引脚少、供电敏感，需稳压供电与 I/O 规划；初期视觉推理走云端；司农 32B 本地部署显存要求高，初期用 8B 或 DeepSeek API。"));
 
 // 7 里程碑计划
-children.push(heading("6. 里程碑计划", 1));
+children.push(heading("7. 里程碑计划", 1));
 children.push(table(
   ["阶段", "时间", "内容", "验收点"],
   [
-    ["M0 开题", "第 1—2 周", "链路定稿、软件环境搭建（Python/Dify/YOLO）", "开题通过"],
-    ["M1 感知-控制闭环", "第 3—6 周", "传感器采集→OLED→继电器→串口帧协议→LabVIEW 上位机", "本地闭环运行，数据帧正确，远程手动可控"],
-    ["M2 上云+日志", "第 7—10 周", "ESP8266 MQTT→EMQX/OneNET→Node-RED 可视化；W25Q64 日志", "云平台实时曲线、断网日志完整可补传"],
-    ["M3 视觉检测", "第 11—18 周", "公开集+自采数据训练 YOLO（先 5 类常见病）→云端推理→触发喷药", "检测准确率 ≥85%，喷药动作联动"],
-    ["M4 智能体决策", "第 19—23 周", "Dify 搭智能体+RAG 知识库（设备决策+农技问答）→ 指令闭环 → 小程序", "自然语言指令自动执行，农技问答可溯源，误操作有兜底"],
+    ["M0 开题", "第 1—2 周", "链路定稿（ESP32 + Node.js + Vue）、软件环境搭建", "开题通过"],
+    ["M1 感知-控制闭环", "第 3—6 周", "ESP32 传感器采集→OLED→继电器→MQTT（本地 EMQX）→Node.js→Vue 控制页", "局域网内数据正确、远程手动可控"],
+    ["M2 上云+拍照+日志", "第 7—10 周", "ESP32-CAM 定时拍照上传；MQTT 上云；Node.js 时序存储+Vue 大屏；microSD 断网补传", "云平台实时曲线、图片可查、断网日志完整可补传"],
+    ["M3 视觉检测", "第 11—18 周", "公开集+自采数据训练 YOLO（先 5 类常见病）→Node.js 调视觉服务→触发喷药", "检测准确率 ≥85%，喷药动作联动"],
+    ["M4 智能体决策", "第 19—23 周", "Node.js 编排智能体+RAG 知识库（设备决策+农技问答）→ 指令闭环 → Vue 对话", "自然语言指令自动执行，农技问答可溯源，误操作有兜底"],
     ["M5 作品化", "第 24 周", "外壳/文档/演示视频/说明书/答辩材料", "达到参赛交付标准"],
   ],
   [1500, 1200, 4100, 2272],
@@ -223,22 +222,23 @@ children.push(table(
 ));
 
 // 8 创新点与预期成果
-children.push(heading("7. 创新点与预期成果", 1));
+children.push(heading("8. 创新点与预期成果", 1));
 children.push(numItem("智能体闭环决策：大模型直接输出设备动作指令，不只停留在问答层。"));
 children.push(numItem("边缘-云协同：断网时本地规则独立运行，联网后云端智能体接管；本地规则永远优先，误操作有兜底。"));
-children.push(numItem("低成本可复制：硬件总成本低，整套闭环可复现，适合竞赛展示与教学科研场景推广。"));
+children.push(numItem("低成本单芯片可复制：ESP32 单芯片完成采集、拍照、控制与联网，链路最短、硬件总成本低，整套闭环可复现，适合竞赛展示与教学科研场景推广。"));
 children.push(numItem("全周期数字档案：从种子到收获持续记录传感器与视觉数据，形成可追溯的生长档案。"));
 
 // 9 风险与应对
-children.push(heading("8. 风险与应对", 1));
+children.push(heading("9. 风险与应对", 1));
 children.push(table(
   ["风险", "应对"],
   [
     ["视觉识别数据不足/效果差", "公开数据集预训练 + 自采微调；范围先缩到 3—5 类常见病害"],
-    ["ESP32-CAM 边缘算力不足", "初期视觉推理放云端，边缘只拍照上传；后期再试轻量模型"],
+    ["ESP32-CAM 算力不足", "初期视觉推理放云端，边缘只拍照上传；后期再试轻量模型"],
+    ["ESP32-CAM 引脚少/供电敏感", "稳压供电；继电器组用 I/O 扩展（如 PCF8574/74HC595）或精简执行器数量"],
     ["智能体误操作", "本地规则优先、指令白名单、关键动作人工确认模式"],
-    ["企业级平台功能多、期望高", "明确项目边界：只做“感知—决策—执行”最小闭环原型，不做全平台，以演示场景验收"],
-    ["时间不足", "按里程碑裁剪：合并施肥/给药、生长分析降级为拍照+周报"],
+    ["Wi-Fi 不稳定", "本地阈值模式 + microSD 日志补传"],
+    ["时间不足", "裁剪顺序：合并施肥/给药、生长分析降级为拍照+周报、Vue 先做单页大屏"],
   ],
   [3200, 5872],
   [AlignmentType.CENTER, AlignmentType.LEFT]
@@ -253,12 +253,14 @@ children.push(bullet("[PlantDoc](https://github.com/pratikkayal/PlantDoc-Dataset
 children.push(bullet("PlantVillage（[Kaggle](https://www.kaggle.com/datasets/abdallahalidev/plantvillage-dataset)，5 万+ 图、38 类）"));
 children.push(bullet("司农（南京农业大学农业大语言模型，8B/32B）"));
 children.push(bullet("[AgriAgent](https://github.com/zhiweihu1103/AgriAgent)（农业多模态大模型，125 星）"));
-children.push(bullet("[EMQX](https://github.com/emqx/emqx)（16.5k 星）/ [Node-RED](https://github.com/node-red/node-red)（23.5k 星）（MQTT Broker 与可视化工具）"));
+children.push(bullet("[Express](https://github.com/expressjs/express)（69k 星）/ [MQTT.js](https://github.com/mqttjs/MQTT.js)（9k 星）（Node.js 后端）"));
+children.push(bullet("[Vue 3](https://github.com/vuejs/core)（54k 星）/ [ECharts](https://github.com/apache/echarts)（67k 星）（前端展示）"));
+children.push(bullet("[EMQX](https://github.com/emqx/emqx)（16.5k 星）（MQTT Broker）"));
 
 const doc = new Document({
   title: "SmartFarmAgent 智慧农业智能体系统——项目方案",
-  subject: "项目方案（导师提交版，v1.7.2）",
-  description: "导师提交版 v1.7.2：背景、行业对标与定位、架构、功能、数据链路、可行性、里程碑、创新点、风险与主要开源参考。",
+  subject: "项目方案（导师提交版，整体重写 v2.0）",
+  description: "导师提交版 v2.0：背景、大赛结合点、架构（ESP32 + Node.js + Vue）、功能、数据链路、可行性、里程碑、创新点、风险与主要开源参考。",
   creator: "LIM",
   styles: {
     default: {
