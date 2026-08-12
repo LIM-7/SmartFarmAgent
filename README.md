@@ -4,19 +4,25 @@
 
 ## 文件说明
 
-- `PROPOSAL.md`：参赛作品说明书（Markdown 源，v3.0，按作品说明书模板重构）
-- `PROPOSAL.tex` / `PROPOSAL.pdf`：说明书 LaTeX 源与 PDF 成品（xelatex 编译）
-- `PROPOSAL.docx`：说明书 Word 成品（三线表、黑体标题、五号表内文字，按 word-typesetting 规范）
-- `TechDoc.md` / `TechDoc.tex` / `TechDoc.pdf` / `TechDoc.docx`：系统技术文档（按《知识问答系统技术文档》模板结构）
-- `Competition_Research.md` / `Competition_Research.tex` / `Competition_Research.pdf` / `Competition_Research.docx`：全国相关赛事调研报告（9 类赛事官网核验、含金量从高到低排序）
-- `build_docx.js`：说明书 Word 生成脚本（docx-js）
-- `build_techdoc.js`：技术文档 Word 生成脚本（docx-js）
-- `build_compdoc.js`：赛事调研报告 Word 生成脚本（docx-js）
-- `VERSIONS.md`：各版本声明与备注
-- `md2docx.py`：通用 Markdown → Word 转换工具（python-docx）
-- `Proposal/Proposal.*`：导师提交版（v2.0，ESP32 + Node.js + Vue 整体重写版，未随 v3.0 重构）
-- `Proposal/Meeting_Points.*`：导师汇报与参赛准备要点（2026-08-10 汇报用）
-- 命名约定：根目录 `PROPOSAL.*`（全大写）= 参赛作品说明书（内部完整版）；`Proposal/` 目录内 `Proposal.*`（首字母大写）= 导师提交版（Windows 大小写不敏感，用目录区分大小写）
+```
+SmartFarmAgent/
+├── README.md / VERSIONS.md          # 说明与版本记录
+├── package.json / package-lock.json # docx-js 依赖
+├── .gitignore
+├── build/                           # 构建脚本
+│   ├── build_docx.js                # 说明书 Word 生成脚本（docx-js）
+│   ├── build_techdoc.js             # 技术文档 Word 生成脚本（docx-js）
+│   ├── build_compdoc.js             # 赛事调研报告 Word 生成脚本（docx-js）
+│   └── md2docx.py                   # 通用 Markdown → Word 转换工具（python-docx）
+└── docs/                            # 交付物（md / tex / pdf / docx）
+    ├── PROPOSAL.*                   # 参赛作品说明书（v3.4，开源资源已核验）
+    ├── TechDoc.*                    # 系统技术文档（第 10 章：参考开源资源与实现路径）
+    ├── Competition_Research.*       # 全国相关赛事调研报告（9 类赛事官网核验）
+    └── Proposal/                    # 导师提交版（Proposal.* v2.0 + Meeting_Points.*）
+```
+
+- 命名约定：`docs/PROPOSAL.*`（全大写）= 参赛作品说明书（内部完整版）；`docs/Proposal/Proposal.*`（首字母大写）= 导师提交版（Windows 大小写不敏感，用目录区分大小写）。
+- 构建：Word 用 `node build/build_*.js`（输出到 `docs/`），PDF 在 `docs/` 内用 `latexmk -xelatex` 编译。
 
 ## v3.0 主要变化
 
@@ -29,6 +35,30 @@
 
 - 赛事调研从附录 A 抽出为独立文档 `Competition_Research.*`：9 类赛事逐项官网核验（部委公告 / 学会官网 / 高校通知交叉确认），按含金量从高到低排序并附官方链接。
 - 说明书附录 A 精简为结论摘要，指向独立调研文档。
+
+## v3.2 主要变化
+
+- 正文去 AI 味润色：智能体协同机制段落重写（消除「与 A 相比 / 与 B 相比」机械对比），行业趋势段语序调整。
+- 全部 8 张表格增加表题并按章编号（表 2-1～表 D-1），正文先引用后出现，符合正式文档规范。
+- LaTeX 排版升级：章节改为中文序号（一、/（一）），附录采用「附录 A：」格式，表计数器按章归零，修复 ≥ 符号缺字。
+- Word 版按 word-typesetting 标准通过终检（DELIVERY GATE: PASS，FAIL=0 / WARN=0）：首行缩进按字符、一级标题前留白、三线表白底、页脚页码。
+
+## v3.3 主要变化
+
+- 删除「队员分工（占位）」附录。
+- 新增「参考开源资源」附录（表 D-1）：10 项核心开源项目，附可点击 GitHub 链接。
+- 附录 A 赛事总览中的竞赛名称全部改为可点击官网链接。
+
+## v3.4 主要变化
+
+- 技术文档新增第 10 章「参考开源资源与实现路径」：表 10-1 收录 16 项开源资源（2026-08-12 GitHub API 逐项核验：存在性 / star / 最近推送 / 归档 / 许可），表 10-2 给出分模块实现路径（对应 M0—M5 里程碑）。
+- 核验发现原收录的 PlantDoc（pratikkayal/PlantDoc）已失效（404），提案附录 D 同步改用 PlantVillage-Dataset（spMohanty/PlantVillage-Dataset）。
+
+## v3.4.1 主要变化
+
+- 目录结构整理：交付物统一移入 `docs/`，构建脚本移入 `build/`，根目录仅保留说明、版本与依赖文件。
+- 清除 LaTeX 中间产物（aux/log/out/xdv/fdb_latexmk/fls）与过时版本副本；`.gitignore` 补充对应模式。
+- 三份 Word 成品从新结构重建，全部通过 word-typesetting 终检（FAIL=0 / WARN=0）。
 
 ## 版本历史
 

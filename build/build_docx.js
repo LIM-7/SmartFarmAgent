@@ -1,4 +1,5 @@
 ﻿const fs = require("fs");
+const path = require("path");
 const {
   Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
   WidthType, BorderStyle, ShadingType, AlignmentType, HeadingLevel,
@@ -37,7 +38,7 @@ const body = (text, opts = {}) =>
     children: runs(text, opts),
     alignment: AlignmentType.JUSTIFIED,
     spacing: { line: 360, before: opts.before || 0, after: opts.after || 0 },
-    indent: opts.indent || { firstLine: 480 },
+    indent: opts.indent || { firstLineChars: 200 },
   });
 
 const bullet = (text) =>
@@ -46,6 +47,14 @@ const bullet = (text) =>
     numbering: { reference: "bullets", level: 0 },
     alignment: AlignmentType.JUSTIFIED,
     spacing: { line: 360, after: 0 },
+  });
+
+const caption = (text) =>
+  new Paragraph({
+    children: [new TextRun({ text, font: FONT, size: 21, bold: false })],
+    alignment: AlignmentType.CENTER,
+    spacing: { before: 160, after: 80, line: 240 },
+    keepNext: true,
   });
 
 const numItem = (text) =>
@@ -139,7 +148,7 @@ children.push(heading("一、作品简介", 1));
 children.push(heading("（一）背景与痛点", 3));
 children.push(body("设施农业（大棚、连栋温室）是保障果蔬稳定供给的重要生产方式，但传统管理高度依赖人工巡检与经验调控：浇水靠手感、病害靠肉眼、生长判断靠主观，存在缺水涝害、病害发现滞后、水肥浪费、环境调控不及时等问题。现有市售「智慧农业」产品大多采用阈值规则控制（如土壤湿度低于设定值即浇水），缺少多源数据综合判断能力；大模型应用多停留在「知识问答」层，只回答问题、不驱动设备，难以形成真正的智能闭环。企业级智慧农业平台功能完整，但重软件集成、成本高、部署复杂，不适合小规模设施农业与教学科研场景快速落地。"));
 children.push(heading("（二）行业与赛事趋势", 3));
-children.push(body("2026 年 7 月，农业农村部信息中心等单位在雄安举办智慧农业创新大赛，设智能农机作业控制、无人机巡田、激光除草、设施小番茄采摘、家禽巡检、鱼群智能检测六大赛道，采用实景场地、真机实操、现场竞技，重点检验装备在真实生产场景中的作业能力；同期国际大学生智能农业装备创新大赛（天鹅杯）、全国大学生物联网设计竞赛（华为杯）、挑战杯「人工智能+」专项赛、中国国际大学生创新大赛等获奖作品普遍具备「软硬一体化、感知—决策—执行闭环、量化效果、场景验证」的共性。低成本、可复现、闭环落地的软硬一体系统，是当前竞赛与行业共同认可的立项方向。"));
+children.push(body("农业农村部信息中心等单位于 2026 年 7 月在雄安举办智慧农业创新大赛，设智能农机作业控制、无人机巡田、激光除草、设施小番茄采摘、家禽巡检、鱼群智能检测六大赛道，采用实景场地、真机实操、现场竞技，重点检验装备在真实生产场景中的作业能力；同期国际大学生智能农业装备创新大赛（天鹅杯）、全国大学生物联网设计竞赛（华为杯）、挑战杯「人工智能+」专项赛、中国国际大学生创新大赛等获奖作品普遍具备「软硬一体化、感知—决策—执行闭环、量化效果、场景验证」的共性。低成本、可复现、闭环落地的软硬一体系统，是当前竞赛与行业共同认可的立项方向。"));
 children.push(heading("（三）作品定位", 3));
 children.push(body("本作品以 ESP32 单芯片为感知执行端，Node.js + Vue 为云平台，大模型智能体为决策大脑，构建设施农业「感知—决策—执行」全闭环系统：传感器与摄像头持续采集环境与作物状态，云端智能体综合传感器、视觉与历史数据给出设备指令和农技方案，指令经白名单校验后下发执行并回传状态，形成数据驱动、可追溯的完整业务闭环。"));
 children.push(heading("（四）核心理念", 3));
@@ -148,6 +157,8 @@ children.push(body("数据驱动、检索前置、本地优先、闭环落地。
 // ── 二、设计原理 ──
 children.push(heading("二、设计原理", 1));
 children.push(heading("（一）系统分层架构", 3));
+children.push(body("系统按六层组织，各层职责与关键技术如表 2-1 所示。"));
+children.push(caption("表 2-1　系统分层架构"));
 children.push(table(
   ["层级", "名称", "组成与职责", "关键技术"],
   [
@@ -174,9 +185,11 @@ children.push(numItem("**智能体决策：**Node.js 编排大模型智能体，
 children.push(numItem("**数据中台与可视化：**MQTT 上行数据经 Node.js 时序存储，Vue + ECharts 大屏实时展示；执行状态回传形成下一次决策依据。"));
 
 children.push(heading("（三）大模型与智能体协同机制", 3));
-children.push(body("系统采用「检索前置、模型后置、数据驱动」的运行机制：RAG 检索真实农业知识构建上下文，约束大模型基于真实素材生成回答与方案；智能体将方案转换为 JSON 设备指令，经白名单校验后下发执行，执行结果回传闭环。与纯软件问答系统相比，本作品把大模型从「回答问题」延伸到「驱动设备」，从机制上形成闭环；与纯阈值规则控制相比，具备多源数据综合判断与自然语言交互能力。"));
+children.push(body("系统按「检索前置、模型后置、数据驱动」运行：RAG 从真实农业知识库构建上下文，大模型据此生成回答与方案；智能体把方案转换为 JSON 设备指令，经白名单校验后下发执行，执行结果回传闭环。纯软件问答系统只回答、不驱动设备，纯阈值规则控制缺少多源综合判断；本作品把两者接入同一条链路，既保留自然语言交互，也能把决策落到设备动作。"));
 
 children.push(heading("（四）完整数据链路", 3));
+children.push(body("数据从感知到执行、再回到决策的完整链路如表 2-2 所示。"));
+children.push(caption("表 2-2　完整数据链路"));
 children.push(table(
   ["环节", "内容", "输出"],
   [
@@ -194,6 +207,8 @@ children.push(table(
 // ── 三、技术方案 ──
 children.push(heading("三、技术方案", 1));
 children.push(heading("（一）技术栈", 3));
+children.push(body("各技术层选型与作用如表 3-1 所示。"));
+children.push(caption("表 3-1　技术栈"));
 children.push(table(
   ["技术层", "采用技术", "作用说明"],
   [
@@ -210,6 +225,8 @@ children.push(table(
 ));
 
 children.push(heading("（二）硬件方案", 3));
+children.push(body("主要器件清单与用途如表 3-2 所示。"));
+children.push(caption("表 3-2　硬件方案"));
 children.push(table(
   ["器件", "用途"],
   [
@@ -241,6 +258,8 @@ children.push(body("种植与植保知识库经检索增强生成回答，附来
 children.push(heading("（五）全周期生长数字档案", 3));
 children.push(body("从定植到收获持续记录传感器与视觉数据，生成可追溯、可对比的生长档案，支撑产量预测与栽培方案优化，形成数据资产。"));
 children.push(heading("（六）创新效果对比", 3));
+children.push(body("创新点、实现方式与量化目标的对比如表 4-1 所示。"));
+children.push(caption("表 4-1　创新效果对比"));
 children.push(table(
   ["创新点", "技术方案", "与现有方法对比", "量化目标"],
   [
@@ -274,12 +293,14 @@ children.push(body("本作品以「感知—决策—执行」闭环为核心，
 // ── 附录 A 赛事适配说明 ──
 children.push(heading("附录 A：赛事适配说明", 1));
 children.push(body("全国 9 类相关赛事已完成官网核验并按含金量排序，明细见独立文档《全国相关赛事调研报告》（Competition_Research.md，同目录附 PDF/DOCX）。核心结论："));
-children.push(bullet("**技术栈主攻：**全国大学生物联网设计竞赛（华为杯，iot.sjtu.edu.cn）、全国大学生嵌入式芯片与系统设计竞赛（socchina.net）、挑战杯「人工智能+」专项赛（tiaozhanbei.net）。"));
-children.push(bullet("**行业主攻：**智慧农业创新大赛（农业农村部信息中心，公告见 moa.gov.cn）、国际大学生智能农业装备创新大赛（天鹅杯，uiaec.ujs.edu.cn）。"));
-children.push(bullet("**获奖共性：**实景实操、软硬一体、大模型/智能体落到执行、量化验证与场景验证（示例：2026 智慧农业创新大赛设施小番茄赛道满分 200 分；挑战杯「人工智能+」一等奖「花语智农」）。"));
+children.push(bullet("**技术栈主攻：**[全国大学生物联网设计竞赛（华为杯）](https://iot.sjtu.edu.cn)、[全国大学生嵌入式芯片与系统设计竞赛](https://www.socchina.net)、[挑战杯「人工智能+」专项赛](https://www.tiaozhanbei.net)。"));
+children.push(bullet("**行业主攻：**[智慧农业创新大赛](https://www.moa.gov.cn/xw/bmdt/202605/t20260520_6484332.htm)（农业农村部信息中心）、[国际大学生智能农业装备创新大赛（天鹅杯）](http://uiaec.ujs.edu.cn)。"));
+children.push(bullet("**获奖共性：**实景实操、软硬一体、大模型/智能体落到执行、量化验证与场景验证（示例：[2026 智慧农业创新大赛](https://www.moa.gov.cn/xw/bmdt/202605/t20260520_6484332.htm)设施小番茄赛道满分 200 分；[挑战杯「人工智能+」](https://www.tiaozhanbei.net)一等奖「花语智农」）。"));
 children.push(body("申报策略：以「感知—决策—执行闭环能力底座」统一叙事，按赛事切换侧重点（物联网/嵌入式类重工程实现，挑战杯/创新大赛重 AI 应用与社会价值，农业装备类重装备化与作业指标）；材料按「作品说明书 + 技术文档 + 演示视频 + 易拉宝 + 承诺书」标准包准备。"));
 // ── 附录 B 里程碑 ──
 children.push(heading("附录 B：里程碑计划（约 6 个月）", 1));
+children.push(body("六个阶段的安排与验收点如表 B-1 所示。"));
+children.push(caption("表 B-1　里程碑计划"));
 children.push(table(
   ["阶段", "时间", "内容", "验收点"],
   [
@@ -296,6 +317,8 @@ children.push(table(
 
 // ── 附录 C 风险与应对 ──
 children.push(heading("附录 C：风险与应对", 1));
+children.push(body("主要风险与应对措施如表 C-1 所示。"));
+children.push(caption("表 C-1　风险与应对"));
 children.push(table(
   ["风险", "应对"],
   [
@@ -310,22 +333,31 @@ children.push(table(
   [AlignmentType.CENTER, AlignmentType.LEFT]
 ));
 
-// ── 附录 D 队员分工 ──
-children.push(heading("附录 D：队员分工（占位，按实际团队填写）", 1));
+// ── 附录 D 参考开源资源 ──
+children.push(heading("附录 D：参考开源资源", 1));
+children.push(body("系统核心链路所依赖的主要开源资源如表 D-1 所示，全部为开发与部署环节直接使用的成熟项目。"));
+children.push(caption("表 D-1　参考开源资源"));
 children.push(table(
-  ["队员", "负责模块", "具体工作内容"],
+  ["开源资源", "用途", "地址"],
   [
-    ["队员 A", "感知执行端开发", "ESP32 采集/拍照/控制固件，MQTT 上下行协议，本地规则与日志"],
-    ["队员 B", "云平台与智能体", "Node.js 后端、MQTT 接入、智能体编排、RAG 问答链路"],
-    ["队员 C", "视觉与数据", "YOLO 模型训练与部署、前端大屏、数据整理与测试"],
+    ["arduino-esp32", "感知执行端固件开发（ESP32 官方 Arduino 核心）", "[github.com/espressif/arduino-esp32](https://github.com/espressif/arduino-esp32)"],
+    ["Express", "云端平台后端 Web 框架", "[github.com/expressjs/express](https://github.com/expressjs/express)"],
+    ["MQTT.js", "设备上下行 MQTT 客户端库", "[github.com/mqttjs/MQTT.js](https://github.com/mqttjs/MQTT.js)"],
+    ["Vue 3", "网页大屏与交互界面框架", "[github.com/vuejs/core](https://github.com/vuejs/core)"],
+    ["Apache ECharts", "实时曲线与数据可视化", "[github.com/apache/echarts](https://github.com/apache/echarts)"],
+    ["Ultralytics YOLOv8", "病害检测与生长分析模型", "[github.com/ultralytics/ultralytics](https://github.com/ultralytics/ultralytics)"],
+    ["OpenCV", "图像预处理与分析", "[github.com/opencv/opencv](https://github.com/opencv/opencv)"],
+    ["EMQX", "本地 MQTT 消息服务器", "[github.com/emqx/emqx](https://github.com/emqx/emqx)"],
+    ["RAGFlow", "农技知识库检索增强（RAG）引擎", "[github.com/infiniflow/ragflow](https://github.com/infiniflow/ragflow)"],
+    ["PlantVillage-Dataset", "植物病害图像数据集（模型训练）", "[github.com/spMohanty/PlantVillage-Dataset](https://github.com/spMohanty/PlantVillage-Dataset)"],
   ],
-  [1300, 2200, 5572],
-  [AlignmentType.CENTER, AlignmentType.CENTER, AlignmentType.LEFT]
+  [2400, 3072, 3600],
+  [AlignmentType.LEFT, AlignmentType.LEFT, AlignmentType.LEFT]
 ));
 
 const doc = new Document({
   title: "SmartFarmAgent 智慧农业智能体系统——参赛作品说明书",
-  subject: "参赛作品说明书（按作品说明书模板重构 v3.0）",
+  subject: "参赛作品说明书（v3.3 开源资源与赛事链接版）",
   description: "基于大模型智能体的设施农业感知-决策-执行闭环系统：作品简介、设计原理、技术方案、创新点、实用价值与赛事适配。",
   creator: "SmartFarmAgent Team",
   styles: {
@@ -393,11 +425,11 @@ const doc = new Document({
 });
 
 Packer.toBuffer(doc).then((buf) => {
-  const names = ["PROPOSAL.docx", "PROPOSAL_v3.1.docx"];
+  const names = ["PROPOSAL.docx", "PROPOSAL_v3.4.docx"];
   let written = null;
   for (const n of names) {
     try {
-      fs.writeFileSync(n, buf);
+      fs.writeFileSync(path.join(__dirname, "..", "docs", n), buf);
       written = n;
       break;
     } catch (e) {

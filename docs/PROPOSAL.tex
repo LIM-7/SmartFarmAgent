@@ -6,15 +6,29 @@
 \usepackage{enumitem}
 \usepackage{xcolor}
 \usepackage{amssymb}
+\usepackage{caption}
 \usepackage[hidelinks]{hyperref}
 \setlist{nosep, leftmargin=1.6em}
 \definecolor{grayline}{gray}{0.65}
 \emergencystretch=1.5em
 \setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.25}
+\counterwithin{table}{section}
+\counterwithin{figure}{section}
+\renewcommand{\thetable}{\thesection-\arabic{table}}
+\renewcommand{\thefigure}{\thesection-\arabic{figure}}
+
+\ctexset{
+  section = {name = {,、}, number = \chinese{section}, format = \heiti\zihao{3},
+             beforeskip = 1.2ex plus .2ex minus .2ex, afterskip = .6ex plus .1ex minus .1ex},
+  subsection = {name = {（,）}, number = \chinese{subsection}, format = \heiti\zihao{4},
+                beforeskip = .9ex plus .1ex minus .1ex, afterskip = .4ex plus .1ex minus .1ex},
+}
+\captionsetup{labelsep=quad, font=small, skip=6pt}
 
 \hypersetup{
   pdftitle={SmartFarmAgent 智慧农业智能体系统——参赛作品说明书},
-  pdfsubject={参赛作品说明书（按作品说明书模板重构 v3.0）},
+  pdfsubject={参赛作品说明书（v3.3 开源资源与赛事链接版）},
   pdfauthor={}
 }
 
@@ -33,7 +47,7 @@
 设施农业（大棚、连栋温室）是保障果蔬稳定供给的重要生产方式，但传统管理高度依赖人工巡检与经验调控：浇水靠手感、病害靠肉眼、生长判断靠主观，存在缺水涝害、病害发现滞后、水肥浪费、环境调控不及时等问题。现有市售「智慧农业」产品大多采用阈值规则控制（如土壤湿度低于设定值即浇水），缺少多源数据综合判断能力；大模型应用多停留在「知识问答」层，只回答问题、不驱动设备，难以形成真正的智能闭环。企业级智慧农业平台功能完整，但重软件集成、成本高、部署复杂，不适合小规模设施农业与教学科研场景快速落地。
 
 \subsection{行业与赛事趋势}
-2026 年 7 月，农业农村部信息中心等单位在雄安举办智慧农业创新大赛，设智能农机作业控制、无人机巡田、激光除草、设施小番茄采摘、家禽巡检、鱼群智能检测六大赛道，采用实景场地、真机实操、现场竞技，重点检验装备在真实生产场景中的作业能力；同期国际大学生智能农业装备创新大赛（天鹅杯）、全国大学生物联网设计竞赛（华为杯）、挑战杯「人工智能+」专项赛、中国国际大学生创新大赛等获奖作品普遍具备「软硬一体化、感知—决策—执行闭环、量化效果、场景验证」的共性。低成本、可复现、闭环落地的软硬一体系统，是当前竞赛与行业共同认可的立项方向。
+农业农村部信息中心等单位于 2026 年 7 月在雄安举办智慧农业创新大赛，设智能农机作业控制、无人机巡田、激光除草、设施小番茄采摘、家禽巡检、鱼群智能检测六大赛道，采用实景场地、真机实操、现场竞技，重点检验装备在真实生产场景中的作业能力；同期国际大学生智能农业装备创新大赛（天鹅杯）、全国大学生物联网设计竞赛（华为杯）、挑战杯「人工智能+」专项赛、中国国际大学生创新大赛等获奖作品普遍具备「软硬一体化、感知—决策—执行闭环、量化效果、场景验证」的共性。低成本、可复现、闭环落地的软硬一体系统，是当前竞赛与行业共同认可的立项方向。
 
 \subsection{作品定位}
 本作品以 ESP32 单芯片为感知执行端，Node.js + Vue 为云平台，大模型智能体为决策大脑，构建设施农业「感知—决策—执行」全闭环系统：传感器与摄像头持续采集环境与作物状态，云端智能体综合传感器、视觉与历史数据给出设备指令和农技方案，指令经白名单校验后下发执行并回传状态，形成数据驱动、可追溯的完整业务闭环。
@@ -43,7 +57,9 @@
 
 \section{设计原理}
 \subsection{系统分层架构}
+系统按六层组织，各层职责与关键技术如表 \ref{tab:layers} 所示。
 \begin{longtable}{p{1.2cm}p{2.2cm}p{8.8cm}p{3.0cm}}
+  \caption{系统分层架构}\label{tab:layers}\\
   \toprule
   层级 & 名称 & 组成与职责 & 关键技术 \\
   \midrule
@@ -69,10 +85,12 @@
 \end{enumerate}
 
 \subsection{大模型与智能体协同机制}
-系统采用「检索前置、模型后置、数据驱动」的运行机制：RAG 检索真实农业知识构建上下文，约束大模型基于真实素材生成回答与方案；智能体将方案转换为 JSON 设备指令，经白名单校验后下发执行，执行结果回传闭环。与纯软件问答系统相比，本作品把大模型从「回答问题」延伸到「驱动设备」，从机制上形成闭环；与纯阈值规则控制相比，具备多源数据综合判断与自然语言交互能力。
+系统按「检索前置、模型后置、数据驱动」运行：RAG 从真实农业知识库构建上下文，大模型据此生成回答与方案；智能体把方案转换为 JSON 设备指令，经白名单校验后下发执行，执行结果回传闭环。纯软件问答系统只回答、不驱动设备，纯阈值规则控制缺少多源综合判断；本作品把两者接入同一条链路，既保留自然语言交互，也能把决策落到设备动作。
 
 \subsection{完整数据链路}
+数据从感知到执行、再回到决策的完整链路如表 \ref{tab:datapath} 所示。
 \begin{longtable}{p{1.5cm}p{11.0cm}p{2.6cm}}
+  \caption{完整数据链路}\label{tab:datapath}\\
   \toprule
   环节 & 内容 & 输出 \\
   \midrule
@@ -87,7 +105,9 @@
 
 \section{技术方案}
 \subsection{技术栈}
+各技术层选型与作用如表 \ref{tab:stack} 所示。
 \begin{longtable}{p{2.4cm}p{4.8cm}p{7.6cm}}
+  \caption{技术栈}\label{tab:stack}\\
   \toprule
   技术层 & 采用技术 & 作用说明 \\
   \midrule
@@ -102,7 +122,9 @@
 \end{longtable}
 
 \subsection{硬件方案}
+主要器件清单与用途如表 \ref{tab:hardware} 所示。
 \begin{longtable}{p{6.4cm}p{8.8cm}}
+  \caption{硬件方案}\label{tab:hardware}\\
   \toprule
   器件 & 用途 \\
   \midrule
@@ -136,13 +158,15 @@
 从定植到收获持续记录传感器与视觉数据，生成可追溯、可对比的生长档案，支撑产量预测与栽培方案优化，形成数据资产。
 
 \subsection{创新效果对比}
+创新点、实现方式与量化目标的对比如表 \ref{tab:innovation} 所示。
 \begin{longtable}{p{2.3cm}p{4.4cm}p{4.2cm}p{3.6cm}}
+  \caption{创新效果对比}\label{tab:innovation}\\
   \toprule
   创新点 & 技术方案 & 与现有方法对比 & 量化目标 \\
   \midrule
   单芯片软硬一体 & ESP32 单芯片集成采集/拍照/控制/联网 & 传统方案软硬分离、成本高、部署繁琐 & 硬件总成本千元级，5 分钟现场部署 \\
   智能体闭环决策 & LLM+RAG → JSON 指令 → 白名单 → 执行回传 & 纯问答无执行、纯规则无智能 & 指令闭环响应 < 2 秒，误动作拦截率 100\% \\
-  边缘-云协同 & 本地规则优先 + microSD 断网补传 & 云端依赖型方案断网即失控 & 断网自持 ≥ 24 小时，日志零丢失 \\
+  边缘-云协同 & 本地规则优先 + microSD 断网补传 & 云端依赖型方案断网即失控 & 断网自持 $\geq$ 24 小时，日志零丢失 \\
   RAG 溯源问答 & 知识库检索增强 + 来源标注 & 通用大模型易幻觉、不可溯源 & 问答溯源覆盖率 100\%，关键指标可核验 \\
   生长数字档案 & 传感器+视觉持续记录与对比 & 人工记录零散、不可追溯 & 全周期档案连续可查，周报自动生成 \\
   \bottomrule
@@ -168,30 +192,35 @@
 本作品以「感知—决策—执行」闭环为核心，采用 ESP32 单芯片、Node.js/Vue 平台与云端大模型智能体，将数据采集、视觉识别、智能决策与设备执行打通为一个可运行、可复现、可推广的软硬一体系统。通过本地规则优先与指令白名单双重安全机制、RAG 溯源问答与全周期数字档案，解决传统设施农业管理依赖人工、智能决策不闭环、数据不可追溯等痛点。系统以低成本单芯片实现完整闭环，紧贴当前全国性竞赛「实景实操、闭环落地、量化验证」的评审导向，具备良好的竞赛适配性与成果转化前景。
 
 \appendix
+\ctexset{section={name={附录~,：}, number=\Alph{section}, format=\heiti\zihao{3}}}
 \section{赛事适配说明}
 全国 9 类相关赛事已完成官网核验并按含金量排序，明细见独立文档《全国相关赛事调研报告》（Competition\_Research，同目录附 MD/PDF/DOCX）。核心结论：
 \begin{itemize}
-  \item \textbf{技术栈主攻}：全国大学生物联网设计竞赛（华为杯，iot.sjtu.edu.cn）、全国大学生嵌入式芯片与系统设计竞赛（socchina.net）、挑战杯「人工智能+」专项赛（tiaozhanbei.net）。
-  \item \textbf{行业主攻}：智慧农业创新大赛（农业农村部信息中心，公告见 moa.gov.cn）、国际大学生智能农业装备创新大赛（天鹅杯，uiaec.ujs.edu.cn）。
-  \item \textbf{获奖共性}：实景实操、软硬一体、大模型/智能体落到执行、量化验证与场景验证（示例：2026 智慧农业创新大赛设施小番茄赛道满分 200 分；挑战杯「人工智能+」一等奖「花语智农」）。
+  \item \textbf{技术栈主攻}：\href{https://iot.sjtu.edu.cn}{全国大学生物联网设计竞赛（华为杯）}、\href{https://www.socchina.net}{全国大学生嵌入式芯片与系统设计竞赛}、\href{https://www.tiaozhanbei.net}{挑战杯「人工智能+」专项赛}。
+  \item \textbf{行业主攻}：\href{https://www.moa.gov.cn/xw/bmdt/202605/t20260520_6484332.htm}{智慧农业创新大赛}（农业农村部信息中心）、\href{http://uiaec.ujs.edu.cn}{国际大学生智能农业装备创新大赛（天鹅杯）}。
+  \item \textbf{获奖共性}：实景实操、软硬一体、大模型/智能体落到执行、量化验证与场景验证（示例：\href{https://www.moa.gov.cn/xw/bmdt/202605/t20260520_6484332.htm}{2026 智慧农业创新大赛}设施小番茄赛道满分 200 分；\href{https://www.tiaozhanbei.net}{挑战杯「人工智能+」}一等奖「花语智农」）。
 \end{itemize}
 申报策略：以「感知—决策—执行闭环能力底座」统一叙事，按赛事切换侧重点（物联网/嵌入式类重工程实现，挑战杯/创新大赛重 AI 应用与社会价值，农业装备类重装备化与作业指标）；材料按「作品说明书 + 技术文档 + 演示视频 + 易拉宝 + 承诺书」标准包准备。
 \section{里程碑计划（约 6 个月）}
+六个阶段的安排与验收点如表 \ref{tab:milestone} 所示。
 \begin{longtable}{p{2.2cm}p{1.7cm}p{6.5cm}p{4.0cm}}
+  \caption{里程碑计划}\label{tab:milestone}\\
   \toprule
   阶段 & 时间 & 内容 & 验收点 \\
   \midrule
   M0 开题 & 第 1—2 周 & 链路定稿（ESP32 + Node.js + Vue）、软件环境搭建 & 开题通过 \\
   M1 感知-控制闭环 & 第 3—6 周 & ESP32 传感器采集 → OLED → 继电器 → MQTT（本地 EMQX）→ Node.js → Vue 控制页 & 局域网内数据正确、远程手动可控 \\
   M2 上云+拍照+日志 & 第 7—10 周 & ESP32-CAM 定时拍照上传；MQTT 上云；Node.js 时序存储 + Vue 大屏；microSD 断网补传 & 实时曲线、图片可查、断网日志完整可补传 \\
-  M3 视觉检测 & 第 11—18 周 & 公开集 + 自采数据训练 YOLO（先 5 类常见病）→ Node.js 调视觉服务 → 触发喷药 & 检测准确率 ≥ 85\%，喷药动作联动 \\
+  M3 视觉检测 & 第 11—18 周 & 公开集 + 自采数据训练 YOLO（先 5 类常见病）→ Node.js 调视觉服务 → 触发喷药 & 检测准确率 $\geq$ 85\%，喷药动作联动 \\
   M4 智能体决策 & 第 19—23 周 & Node.js 编排智能体 + RAG 知识库（设备决策 + 农技问答）→ JSON 指令闭环 → Vue 对话 & 自然语言指令自动执行，问答可溯源，误操作有兜底 \\
   M5 作品化 & 第 24 周 & 外壳/说明书/演示视频/易拉宝/答辩材料 & 达到参赛交付标准 \\
   \bottomrule
 \end{longtable}
 
 \section{风险与应对}
+主要风险与应对措施如表 \ref{tab:risk} 所示。
 \begin{longtable}{p{5.2cm}p{10.0cm}}
+  \caption{风险与应对}\label{tab:risk}\\
   \toprule
   风险 & 应对 \\
   \midrule
@@ -204,14 +233,23 @@
   \bottomrule
 \end{longtable}
 
-\section{队员分工（占位，按实际团队填写）}
-\begin{longtable}{p{1.8cm}p{3.8cm}p{9.6cm}}
+\section{参考开源资源}
+系统核心链路所依赖的主要开源资源如表 \ref{tab:oss} 所示，全部为开发与部署环节直接使用的成熟项目。
+\begin{longtable}{p{3.6cm}p{5.8cm}p{5.8cm}}
+  \caption{参考开源资源}\label{tab:oss}\\
   \toprule
-  队员 & 负责模块 & 具体工作内容 \\
+  开源资源 & 用途 & 地址 \\
   \midrule
-  队员 A & 感知执行端开发 & ESP32 采集/拍照/控制固件，MQTT 上下行协议，本地规则与日志 \\
-  队员 B & 云平台与智能体 & Node.js 后端、MQTT 接入、智能体编排、RAG 问答链路 \\
-  队员 C & 视觉与数据 & YOLO 模型训练与部署、前端大屏、数据整理与测试 \\
+  arduino-esp32 & 感知执行端固件开发（ESP32 官方 Arduino 核心） & \url{https://github.com/espressif/arduino-esp32} \\
+  Express & 云端平台后端 Web 框架 & \url{https://github.com/expressjs/express} \\
+  MQTT.js & 设备上下行 MQTT 客户端库 & \url{https://github.com/mqttjs/MQTT.js} \\
+  Vue 3 & 网页大屏与交互界面框架 & \url{https://github.com/vuejs/core} \\
+  Apache ECharts & 实时曲线与数据可视化 & \url{https://github.com/apache/echarts} \\
+  Ultralytics YOLOv8 & 病害检测与生长分析模型 & \url{https://github.com/ultralytics/ultralytics} \\
+  OpenCV & 图像预处理与分析 & \url{https://github.com/opencv/opencv} \\
+  EMQX & 本地 MQTT 消息服务器 & \url{https://github.com/emqx/emqx} \\
+  RAGFlow & 农技知识库检索增强（RAG）引擎 & \url{https://github.com/infiniflow/ragflow} \\
+  PlantVillage-Dataset & 植物病害图像数据集（模型训练） & \url{https://github.com/spMohanty/PlantVillage-Dataset} \\
   \bottomrule
 \end{longtable}
 

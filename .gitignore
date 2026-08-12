@@ -5,3 +5,6 @@ node_modules/
 *.aux
 *.log
 *.out
+*.fdb_latexmk
+*.fls
+*.xdv

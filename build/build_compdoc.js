@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 const {
   Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
   WidthType, BorderStyle, ShadingType, AlignmentType, HeadingLevel,
@@ -37,7 +38,7 @@ const body = (text, opts = {}) =>
     children: runs(text, opts),
     alignment: AlignmentType.JUSTIFIED,
     spacing: { line: 360, before: opts.before || 0, after: opts.after || 0 },
-    indent: opts.indent || { firstLine: 480 },
+    indent: opts.indent || { firstLineChars: 200 },
   });
 
 const bullet = (text) =>
@@ -315,6 +316,21 @@ const doc = new Document({
 });
 
 Packer.toBuffer(doc).then((buf) => {
-  fs.writeFileSync("Competition_Research.docx", buf);
-  console.log("Competition_Research.docx written, bytes = " + buf.length);
+  const names = ["Competition_Research.docx", "Competition_Research_v3.4.docx"];
+  let written = null;
+  for (const n of names) {
+    try {
+      fs.writeFileSync(path.join(__dirname, "..", "docs", n), buf);
+      written = n;
+      break;
+    } catch (e) {
+      console.log("write failed for " + n + ": " + e.code);
+    }
+  }
+  if (written) {
+    console.log(written + " written, bytes = " + buf.length);
+  } else {
+    console.error("ALL WRITES FAILED");
+    process.exit(1);
+  }
 });

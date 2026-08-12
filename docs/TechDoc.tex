@@ -6,11 +6,18 @@
 \usepackage{enumitem}
 \usepackage{xcolor}
 \usepackage{amssymb}
+\usepackage{caption}
 \usepackage[hidelinks]{hyperref}
 \setlist{nosep, leftmargin=1.6em}
 \definecolor{grayline}{gray}{0.65}
 \emergencystretch=1.5em
 \setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.25}
+\counterwithin{table}{section}
+\counterwithin{figure}{section}
+\renewcommand{\thetable}{\thesection-\arabic{table}}
+\renewcommand{\thefigure}{\thesection-\arabic{figure}}
+\captionsetup{labelsep=quad, font=small, skip=6pt}
 
 \hypersetup{
   pdftitle={SmartFarmAgent 系统技术文档},
@@ -207,6 +214,58 @@ RAG 问答模块面向农技知识查询，提供基于知识库的溯源问答�
   \item 数据容错：microSD 本地日志保证断网数据零丢失，联网后自动补传。
   \item 模型降级：模型服务不可用时回退到规则引擎与知识库检索，保证基本可用。
   \item 运行审计：指令、告警与问答均记录审计日志，可回查可追溯。
+\end{itemize}
+
+\section{参考开源资源与实现路径}
+\subsection{参考开源资源}
+系统核心链路所依赖的开源资源已完成逐项核验（2026-08-12，GitHub REST API 核验存在性、star 数、最近推送与归档状态），详见表 \ref{tab:techoss}。
+\begin{longtable}{p{3.0cm}p{5.0cm}p{1.6cm}p{1.9cm}p{1.5cm}}
+  \caption{参考开源资源（2026-08-12 核验）}\label{tab:techoss}\\
+  \toprule
+  开源资源 & 用途 & Star & 最近更新 & 许可 \\
+  \midrule
+  \href{https://github.com/espressif/arduino-esp32}{arduino-esp32} & ESP32 Arduino 核心（固件开发） & 17,220 & 2026-08-12 & LGPL-2.1 \\
+  \href{https://github.com/espressif/esp-idf}{esp-idf} & ESP32 官方 SDK（ESP-IDF 开发） & 18,754 & 2026-08-11 & Apache-2.0 \\
+  \href{https://github.com/knolleary/PubSubClient}{PubSubClient} & ESP32 MQTT 客户端库 & 4,014 & 2026-06-10 & MIT \\
+  \href{https://github.com/expressjs/express}{Express} & Node.js Web 框架 & 69,350 & 2026-08-01 & MIT \\
+  \href{https://github.com/mqttjs/MQTT.js}{MQTT.js} & MQTT 客户端库 & 9,103 & 2026-07-20 & — \\
+  \href{https://github.com/websockets/ws}{ws} & WebSocket 库 & 22,791 & 2026-08-06 & MIT \\
+  \href{https://github.com/emqx/emqx}{EMQX} & MQTT 消息服务器 & 16,607 & 2026-08-11 & — \\
+  \href{https://github.com/vuejs/core}{Vue 3} & 前端框架 & 54,205 & 2026-08-12 & MIT \\
+  \href{https://github.com/apache/echarts}{Apache ECharts} & 数据可视化 & 67,049 & 2026-08-04 & Apache-2.0 \\
+  \href{https://github.com/ultralytics/ultralytics}{Ultralytics YOLOv8} & 目标检测模型框架 & 60,531 & 2026-08-12 & AGPL-3.0 \\
+  \href{https://github.com/opencv/opencv}{OpenCV} & 图像处理 & 90,382 & 2026-08-11 & Apache-2.0 \\
+  \href{https://github.com/spMohanty/PlantVillage-Dataset}{PlantVillage-Dataset} & 植物病害数据集 & 944 & 2026-02-05 & — \\
+  \href{https://github.com/infiniflow/ragflow}{RAGFlow} & RAG 引擎 & 87,301 & 2026-08-12 & Apache-2.0 \\
+  \href{https://github.com/langgenius/dify}{Dify} & RAG/Agent 应用平台 & 152,137 & 2026-08-12 & — \\
+  \href{https://github.com/mysql/mysql-server}{MySQL} & 关系型数据库 & 12,376 & 2026-07-31 & — \\
+  \href{https://github.com/nodejs/node}{Node.js} & JavaScript 运行时 & 118,876 & 2026-08-12 & — \\
+  \bottomrule
+\end{longtable}
+
+说明：许可列来自 GitHub API 的 SPDX 标识，标「—」表示未返回标准标识，实际以仓库 License 文件为准；star 数与推送时间为核验当日快照；Ultralytics YOLOv8 为 AGPL-3.0，商业化部署前需评估开源合规要求。
+
+\subsection{实现路径}
+按模块划分的实现路径如表 \ref{tab:techpath} 所示，推荐顺序与项目里程碑 M0—M5 对应。
+\begin{longtable}{p{2.2cm}p{6.0cm}p{4.2cm}p{2.8cm}}
+  \caption{实现路径（推荐顺序）}\label{tab:techpath}\\
+  \toprule
+  阶段 & 实现要点 & 依赖开源资源 & 验收标准 \\
+  \midrule
+  M1 感知执行端 & ESP32 工程搭建（Arduino 或 ESP-IDF）；I2C/ADC 接入 BH1750、DHT11、土壤湿度；继电器/PWM 控制；microSD 日志；本地阈值规则 & arduino-esp32、esp-idf & 传感器读数正确，OLED 显示，日志落盘，断网规则自持 \\
+  M2 通信与数据通道 & 本地部署 EMQX；ESP32 经 PubSubClient 上报/订阅；Node.js + Express 建 REST API；MQTT.js 订阅入库；ws 实时推送 & EMQX、PubSubClient、Express、MQTT.js、ws、MySQL & MQTT 上下行闭环，数据入库，WebSocket 实时刷新 \\
+  M3 前端展示 & Vue 3 工程搭建；ECharts 实时曲线与统计；控制页、问答页、告警页 & Vue 3、Apache ECharts & 大屏实时曲线正确，控制指令可达 \\
+  M4 视觉检测 & OpenCV 图像预处理；Ultralytics YOLOv8 用 PlantVillage 公开集预训练 + 自采数据微调；HTTP/JSON 检测服务 & OpenCV、Ultralytics YOLOv8、PlantVillage-Dataset & 检测准确率 $\geq$ 85\%，喷药动作联动 \\
+  M5 RAG 与智能体 & RAGFlow 或 Dify 建知识库（种植手册/病虫害图谱/用药规范）；文档切分向量化；检索增强问答；智能体编排输出 JSON 指令 & RAGFlow、Dify & 问答附来源可溯源，指令闭环执行，白名单拦截有效 \\
+  M6 端到端联调 & 全链路联调；断网自持与补传；安全白名单复核；演示材料与文档 & 全部上述资源 & 感知→决策→执行闭环稳定运行，演示完整 \\
+  \bottomrule
+\end{longtable}
+
+\subsection{核验说明}
+\begin{itemize}
+  \item 核验时间：2026-08-12；核验方式：GitHub REST API（repos/\{owner\}/\{repo\}），逐项确认仓库存在、非归档，并获取 star 数、最近推送与许可证标识。
+  \item 原拟收录的 PlantDoc（pratikkayal/PlantDoc）经核验返回 404（仓库已失效），未收录，改用 PlantVillage-Dataset。
+  \item star 数与推送时间为核验当日快照；许可标识「—」表示 GitHub API 未返回标准 SPDX 标识，实际以各仓库 License 文件为准。
 \end{itemize}
 
 \end{document}

@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 const {
   Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
   WidthType, BorderStyle, ShadingType, AlignmentType, HeadingLevel,
@@ -37,7 +38,7 @@ const body = (text, opts = {}) =>
     children: runs(text, opts),
     alignment: AlignmentType.JUSTIFIED,
     spacing: { line: 360, before: opts.before || 0, after: opts.after || 0 },
-    indent: opts.indent || { firstLine: 480 },
+    indent: opts.indent || { firstLineChars: 200 },
   });
 
 const bullet = (text) =>
@@ -46,6 +47,14 @@ const bullet = (text) =>
     numbering: { reference: "bullets", level: 0 },
     alignment: AlignmentType.JUSTIFIED,
     spacing: { line: 360, after: 0 },
+  });
+
+const caption = (text) =>
+  new Paragraph({
+    children: [new TextRun({ text, font: FONT, size: 21, bold: false })],
+    alignment: AlignmentType.CENTER,
+    spacing: { before: 160, after: 80, line: 240 },
+    keepNext: true,
   });
 
 const numItem = (text) =>
@@ -287,6 +296,58 @@ children.push(bullet("数据容错：microSD 本地日志保证断网数据零�
 children.push(bullet("模型降级：模型服务不可用时回退到规则引擎与知识库检索，保证基本可用。"));
 children.push(bullet("运行审计：指令、告警与问答均记录审计日志，可回查可追溯。"));
 
+// ── 10 参考开源资源与实现路径 ──
+children.push(heading("10. 参考开源资源与实现路径", 1));
+children.push(heading("10.1 参考开源资源", 2));
+children.push(body("系统核心链路所依赖的开源资源已完成逐项核验（2026-08-12，GitHub REST API 核验存在性、star 数、最近推送与归档状态），详见表 10-1。"));
+children.push(caption("表 10-1　参考开源资源（2026-08-12 核验）"));
+children.push(table(
+  ["开源资源", "用途", "Star", "最近更新", "许可"],
+  [
+    ["[arduino-esp32](https://github.com/espressif/arduino-esp32)", "ESP32 Arduino 核心（固件开发）", "17,220", "2026-08-12", "LGPL-2.1"],
+    ["[esp-idf](https://github.com/espressif/esp-idf)", "ESP32 官方 SDK（ESP-IDF 开发）", "18,754", "2026-08-11", "Apache-2.0"],
+    ["[PubSubClient](https://github.com/knolleary/PubSubClient)", "ESP32 MQTT 客户端库", "4,014", "2026-06-10", "MIT"],
+    ["[Express](https://github.com/expressjs/express)", "Node.js Web 框架", "69,350", "2026-08-01", "MIT"],
+    ["[MQTT.js](https://github.com/mqttjs/MQTT.js)", "MQTT 客户端库", "9,103", "2026-07-20", "—"],
+    ["[ws](https://github.com/websockets/ws)", "WebSocket 库", "22,791", "2026-08-06", "MIT"],
+    ["[EMQX](https://github.com/emqx/emqx)", "MQTT 消息服务器", "16,607", "2026-08-11", "—"],
+    ["[Vue 3](https://github.com/vuejs/core)", "前端框架", "54,205", "2026-08-12", "MIT"],
+    ["[Apache ECharts](https://github.com/apache/echarts)", "数据可视化", "67,049", "2026-08-04", "Apache-2.0"],
+    ["[Ultralytics YOLOv8](https://github.com/ultralytics/ultralytics)", "目标检测模型框架", "60,531", "2026-08-12", "AGPL-3.0"],
+    ["[OpenCV](https://github.com/opencv/opencv)", "图像处理", "90,382", "2026-08-11", "Apache-2.0"],
+    ["[PlantVillage-Dataset](https://github.com/spMohanty/PlantVillage-Dataset)", "植物病害数据集", "944", "2026-02-05", "—"],
+    ["[RAGFlow](https://github.com/infiniflow/ragflow)", "RAG 引擎", "87,301", "2026-08-12", "Apache-2.0"],
+    ["[Dify](https://github.com/langgenius/dify)", "RAG/Agent 应用平台", "152,137", "2026-08-12", "—"],
+    ["[MySQL](https://github.com/mysql/mysql-server)", "关系型数据库", "12,376", "2026-07-31", "—"],
+    ["[Node.js](https://github.com/nodejs/node)", "JavaScript 运行时", "118,876", "2026-08-12", "—"],
+  ],
+  [1900, 3100, 1100, 1500, 1472],
+  [AlignmentType.LEFT, AlignmentType.LEFT, AlignmentType.CENTER, AlignmentType.CENTER, AlignmentType.CENTER]
+));
+children.push(body("说明：许可列来自 GitHub API 的 SPDX 标识，标「—」表示未返回标准标识，实际以仓库 License 文件为准；star 数与推送时间为核验当日快照；Ultralytics YOLOv8 为 AGPL-3.0，商业化部署前需评估开源合规要求。", { before: 80 }));
+
+children.push(heading("10.2 实现路径", 2));
+children.push(body("按模块划分的实现路径如表 10-2 所示，推荐顺序与项目里程碑 M0—M5 对应。"));
+children.push(caption("表 10-2　实现路径（推荐顺序）"));
+children.push(table(
+  ["阶段", "实现要点", "依赖开源资源", "验收标准"],
+  [
+    ["M1 感知执行端", "ESP32 工程搭建（Arduino 或 ESP-IDF）；I2C/ADC 接入 BH1750、DHT11、土壤湿度；继电器/PWM 控制；microSD 日志；本地阈值规则", "arduino-esp32、esp-idf", "传感器读数正确，OLED 显示，日志落盘，断网规则自持"],
+    ["M2 通信与数据通道", "本地部署 EMQX；ESP32 经 PubSubClient 上报/订阅；Node.js + Express 建 REST API；MQTT.js 订阅入库；ws 实时推送", "EMQX、PubSubClient、Express、MQTT.js、ws、MySQL", "MQTT 上下行闭环，数据入库，WebSocket 实时刷新"],
+    ["M3 前端展示", "Vue 3 工程搭建；ECharts 实时曲线与统计；控制页、问答页、告警页", "Vue 3、Apache ECharts", "大屏实时曲线正确，控制指令可达"],
+    ["M4 视觉检测", "OpenCV 图像预处理；Ultralytics YOLOv8 用 PlantVillage 公开集预训练 + 自采数据微调；HTTP/JSON 检测服务", "OpenCV、Ultralytics YOLOv8、PlantVillage-Dataset", "检测准确率 ≥ 85%，喷药动作联动"],
+    ["M5 RAG 与智能体", "RAGFlow 或 Dify 建知识库（种植手册/病虫害图谱/用药规范）；文档切分向量化；检索增强问答；智能体编排输出 JSON 指令", "RAGFlow、Dify", "问答附来源可溯源，指令闭环执行，白名单拦截有效"],
+    ["M6 端到端联调", "全链路联调；断网自持与补传；安全白名单复核；演示材料与文档", "全部上述资源", "感知→决策→执行闭环稳定运行，演示完整"],
+  ],
+  [1300, 4100, 2400, 1272],
+  [AlignmentType.LEFT, AlignmentType.LEFT, AlignmentType.LEFT, AlignmentType.LEFT]
+));
+
+children.push(heading("10.3 核验说明", 2));
+children.push(bullet("核验时间：2026-08-12；核验方式：GitHub REST API（repos/{owner}/{repo}），逐项确认仓库存在、非归档，并获取 star 数、最近推送与许可证标识。"));
+children.push(bullet("原拟收录的 PlantDoc（pratikkayal/PlantDoc）经核验返回 404（仓库已失效），未收录，改用 PlantVillage-Dataset。"));
+children.push(bullet("star 数与推送时间为核验当日快照；许可标识「—」表示 GitHub API 未返回标准 SPDX 标识，实际以各仓库 License 文件为准。"));
+
 const doc = new Document({
   title: "SmartFarmAgent 系统技术文档",
   subject: "系统技术文档（v3.0 配套）",
@@ -357,6 +418,21 @@ const doc = new Document({
 });
 
 Packer.toBuffer(doc).then((buf) => {
-  fs.writeFileSync("TechDoc.docx", buf);
-  console.log("TechDoc.docx written, bytes = " + buf.length);
+  const names = ["TechDoc.docx", "TechDoc_v3.4.docx"];
+  let written = null;
+  for (const n of names) {
+    try {
+      fs.writeFileSync(path.join(__dirname, "..", "docs", n), buf);
+      written = n;
+      break;
+    } catch (e) {
+      console.log("write failed for " + n + ": " + e.code);
+    }
+  }
+  if (written) {
+    console.log(written + " written, bytes = " + buf.length);
+  } else {
+    console.error("ALL WRITES FAILED");
+    process.exit(1);
+  }
 });

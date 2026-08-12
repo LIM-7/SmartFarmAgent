@@ -26,6 +26,10 @@
 | v2.0 | 2026-08-10 | 整体重写：感知执行端由 STM32+ESP8266 收敛为 ESP32 单芯片（数据采集、拍照、控制、联网、microSD 日志一体，移除串口网关/独立 Flash 日志链路）；平台技术栈由 LabVIEW 上位机/Node-RED 可视化/农业岛二开/小程序改为 Node.js + Vue 3 全栈（Express、MQTT.js、ECharts、WebSocket）；完整版与导师版 MD/TeX/PDF/DOCX、汇报要点同步重写；开源参考新增并核验 ESP32/Node/Vue 生态 5 项（arduino-esp32、Express、MQTT.js、Vue 3、ECharts），ESP32-CAM 视觉项目保留。 |
 | v3.0 | 2026-08-12 | 按参赛作品说明书模板重构主文档（作品简介/设计原理/技术方案/创新点/实用价值/总结 + 赛事适配/里程碑/风险/队员分工附录），定位为无特定参赛目标的通用竞赛项目书；全国范围调研 9 类相关赛事与获奖作品（智慧农业创新大赛、天鹅杯、物联网设计竞赛、海峡两岸暨港澳计算机创新作品赛、挑战杯 AI+、创新大赛、研电赛、嵌入式竞赛、机器人大赛），提炼「实景实操、软硬一体、闭环落地、量化验证」评审共性并写入附录 A；新增配套系统技术文档（TechDoc，按《知识问答系统技术文档》模板：定位/技术栈/架构/模块/链路/存储/接口/安全容错）；新增创新效果对比表与量化目标；删除金丰上位机-移植版（不再使用的 LabVIEW 路线资产）。导师提交版 Proposal/ 保持 v2.0 不变。 |
 | v3.1 | 2026-08-12 | 赛事调研从说明书附录 A 抽出，新增独立文档《全国相关赛事调研报告》（Competition_Research.md/tex/pdf/docx，按含金量从高到低排序）；9 类赛事全部经官网/部委公告/学会通知/高校通知交叉核验，逐项附官方链接与主办方；说明书附录 A 精简为结论摘要并指向独立文档；Word 生成脚本新增 build_compdoc.js。 |
+| v3.2 | 2026-08-12 | 全文润色 + 排版规范升级：正文去 AI 味润色（智能体协同机制段落重写、行业趋势段语序调整）；全部 8 张表格增加表题并按章编号（表 2-1～表 D-1），正文先引用后出现；LaTeX 章节编号改为中文序号（一、/（一））、附录改为「附录 A：」格式，表计数器按章归零，≥ 符号修复；Word 版按 word-typesetting 标准终检 FAIL=0 / WARN=0（首行缩进按字符、一级标题前留白、三线表白底、页码），三端（md/tex/js）内容同步。 |
+| v3.3 | 2026-08-12 | 附录调整：删除「队员分工（占位）」附录；新增「参考开源资源」附录（表 D-1，10 项核心开源项目：arduino-esp32/Express/MQTT.js/Vue 3/ECharts/YOLOv8/OpenCV/EMQX/RAGFlow/PlantDoc，均附可点击 GitHub 链接）；附录 A 赛事总览中竞赛名称全部改为可点击官网链接（物联网设计竞赛、嵌入式竞赛、挑战杯、智慧农业创新大赛、天鹅杯）；三端（md/tex/js）同步，PDF 8 页、DOCX 终检 FAIL=0 / WARN=0。 |
+| v3.4 | 2026-08-12 | 开源资源全面核验 + 技术文档补全：技术文档 TechDoc 新增第 10 章「参考开源资源与实现路径」（表 10-1 资源总表 16 项 + 表 10-2 分模块实现路径，对应 M0—M5 里程碑；16 项资源均于 2026-08-12 经 GitHub REST API 逐项核验存在性/star/最近推送/归档/许可，附核验说明与可点击链接）；核验中发现提案附录 D 原收录的 PlantDoc（pratikkayal/PlantDoc）已失效（404），改用 PlantVillage-Dataset（spMohanty/PlantVillage-Dataset）；PROPOSAL 与 TechDoc 的 Word 版均通过 word-typesetting 终检（FAIL=0 / WARN=0）。 |
+| v3.4.1 | 2026-08-12 | 目录结构整理：交付物统一移入 docs/，构建脚本移入 build/（脚本输出路径改为相对脚本目录、写入 ../docs/），根目录仅保留 README/VERSIONS/package 与 .gitignore；清除 LaTeX 中间产物（aux/log/out/xdv/fdb_latexmk/fls）与过时版本副本；.gitignore 补充 LaTeX 生成物模式；三份 Word 成品（PROPOSAL/TechDoc/Competition_Research）从新结构重建，全部通过 word-typesetting 终检（FAIL=0 / WARN=0）。 |
 
 ## 项目定位（一句话）
 
