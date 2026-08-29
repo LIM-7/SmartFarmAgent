@@ -30,6 +30,7 @@
 | v3.3 | 2026-08-12 | 附录调整：删除「队员分工（占位）」附录；新增「参考开源资源」附录（表 D-1，10 项核心开源项目：arduino-esp32/Express/MQTT.js/Vue 3/ECharts/YOLOv8/OpenCV/EMQX/RAGFlow/PlantDoc，均附可点击 GitHub 链接）；附录 A 赛事总览中竞赛名称全部改为可点击官网链接（物联网设计竞赛、嵌入式竞赛、挑战杯、智慧农业创新大赛、天鹅杯）；三端（md/tex/js）同步，PDF 8 页、DOCX 终检 FAIL=0 / WARN=0。 |
 | v3.4 | 2026-08-12 | 开源资源全面核验 + 技术文档补全：技术文档 TechDoc 新增第 10 章「参考开源资源与实现路径」（表 10-1 资源总表 16 项 + 表 10-2 分模块实现路径，对应 M0—M5 里程碑；16 项资源均于 2026-08-12 经 GitHub REST API 逐项核验存在性/star/最近推送/归档/许可，附核验说明与可点击链接）；核验中发现提案附录 D 原收录的 PlantDoc（pratikkayal/PlantDoc）已失效（404），改用 PlantVillage-Dataset（spMohanty/PlantVillage-Dataset）；PROPOSAL 与 TechDoc 的 Word 版均通过 word-typesetting 终检（FAIL=0 / WARN=0）。 |
 | v3.4.1 | 2026-08-12 | 目录结构整理：交付物统一移入 docs/，构建脚本移入 build/（脚本输出路径改为相对脚本目录、写入 ../docs/），根目录仅保留 README/VERSIONS/package 与 .gitignore；清除 LaTeX 中间产物（aux/log/out/xdv/fdb_latexmk/fls）与过时版本副本；.gitignore 补充 LaTeX 生成物模式；三份 Word 成品（PROPOSAL/TechDoc/Competition_Research）从新结构重建，全部通过 word-typesetting 终检（FAIL=0 / WARN=0）。 |
+| v3.5 | 2026-08-29 | 新增闭环系统设计方案 ClosedLoop_Design.md/docx（Web 版：四情监测、评估意见、施肥/灌溉处方、执行反馈，对齐 TechDoc 六层架构与 M1—M6 里程碑，含叁拾叁考察借鉴对照表）；README 文件树同步。 |
 
 ## 项目定位（一句话）
 

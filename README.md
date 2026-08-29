@@ -9,16 +9,19 @@ SmartFarmAgent/
 ├── README.md / VERSIONS.md          # 说明与版本记录
 ├── package.json / package-lock.json # docx-js 依赖
 ├── .gitignore
+├── BerryHarvestRobot/               # 小浆果柔性采摘机器人（研究方向框架）
 ├── build/                           # 构建脚本
 │   ├── build_docx.js                # 说明书 Word 生成脚本（docx-js）
 │   ├── build_techdoc.js             # 技术文档 Word 生成脚本（docx-js）
 │   ├── build_compdoc.js             # 赛事调研报告 Word 生成脚本（docx-js）
+│   ├── build_closedloop.js            # 闭环系统设计方案 Word 生成脚本（docx-js）
 │   └── md2docx.py                   # 通用 Markdown → Word 转换工具（python-docx）
 └── docs/                            # 交付物（md / tex / pdf / docx）
     ├── PROPOSAL.*                   # 参赛作品说明书（v3.4，开源资源已核验）
     ├── TechDoc.*                    # 系统技术文档（第 10 章：参考开源资源与实现路径）
     ├── Competition_Research.*       # 全国相关赛事调研报告（9 类赛事官网核验）
-    └── Proposal/                    # 导师提交版（Proposal.* v2.0 + Meeting_Points.*）
+    ├── Proposal/                    # 导师提交版（Proposal.* v2.0 + Meeting_Points.*）
+    └── ClosedLoop_Design.*         # 闭环系统设计方案（Web 版：四情监测 + 评估方案 + 执行反馈）
 ```
 
 - 命名约定：`docs/PROPOSAL.*`（全大写）= 参赛作品说明书（内部完整版）；`docs/Proposal/Proposal.*`（首字母大写）= 导师提交版（Windows 大小写不敏感，用目录区分大小写）。
