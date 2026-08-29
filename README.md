@@ -9,7 +9,6 @@ SmartFarmAgent/
 ├── README.md / VERSIONS.md          # 说明与版本记录
 ├── package.json / package-lock.json # docx-js 依赖
 ├── .gitignore
-├── BerryHarvestRobot/               # 小浆果柔性采摘机器人（研究方向框架）
 ├── build/                           # 构建脚本
 │   ├── build_docx.js                # 说明书 Word 生成脚本（docx-js）
 │   ├── build_techdoc.js             # 技术文档 Word 生成脚本（docx-js）
